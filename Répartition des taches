@@ -1,0 +1,11 @@
+Base:
+- Lecture de fichiers
+- Detecter station de départ
+- Detecter station d'arrivée
+- Afficher le plus court chemin
+- Arbre couvrant de poids minimum
+
+Répartitions des tâches
+- Nam : Connexité + Bonus Partie PPC
+- Ugo : Bellman-Ford
+- Shakana : Prim
