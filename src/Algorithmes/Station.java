@@ -1,13 +1,13 @@
 package Algorithmes;
 
 public class Station {
-    private String id;           // Numéro du sommet
+    private int id;           // Numéro du sommet
     private String nom;          // Nom de la station
     private String ligne;           // Numéro de la ligne de métro
     private boolean estTerminus; // Si la station est un terminus
     private int branchement;     // Informations sur les branchements
 
-    public Station(String id, String nom, String ligne, boolean estTerminus, int branchement) {
+    public Station(int id, String nom, String ligne, boolean estTerminus, int branchement) {
         this.id = id;
         this.nom = nom;
         this.ligne = ligne;
@@ -16,7 +16,7 @@ public class Station {
     }
 
     // Getters et setters
-    public String getId() {
+    public int getId() {
         return id;
     }
 
