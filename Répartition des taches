@@ -1,9 +1,9 @@
 Base:
-- Lecture de fichiers
-- Detecter station de départ
-- Detecter station d'arrivée
-- Afficher le plus court chemin
-- Arbre couvrant de poids minimum
+- Lecture de fichiers - Shakana
+- Detecter station de départ - Nam
+- Detecter station d'arrivée - Nam
+- Afficher le plus court chemin - Ugo
+- Arbre couvrant de poids minimum - Shakana
 
 Répartitions des tâches
 - Nam : Connexité + Bonus Partie PPC
