@@ -22,4 +22,9 @@ public class Liaison {
    public int getPoids() {
         return temps;
    }
+
+    @Override
+    public String toString() {
+        return station1 + " -- > " + station2 + " en " + temps + " s.";
+    }
 }

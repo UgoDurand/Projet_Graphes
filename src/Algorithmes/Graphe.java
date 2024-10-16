@@ -80,7 +80,7 @@ public class Graphe {
         }
         Collections.reverse(chemin);  // Le chemin est reconstruit à l'envers
 
-        return chemin.isEmpty() || chemin.get(0) != depart ? new ArrayList<>() : chemin;  // Retourne le chemin ou une liste vide si aucun chemin trouvé
+        return chemin.isEmpty() || chemin.get(0) != depart ? new ArrayList<>() : chemin;  // Retourner le chemin ou une liste vide si aucun chemin trouvé
     }
 
     public void afficherGraphe() {
