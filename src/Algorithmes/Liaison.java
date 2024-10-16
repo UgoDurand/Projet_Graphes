@@ -25,6 +25,6 @@ public class Liaison {
 
     @Override
     public String toString() {
-        return station1 + " -- > " + station2 + " en " + temps + " s.";
+        return station1 + " --> " + station2 + " en " + temps + " s.";
     }
 }
