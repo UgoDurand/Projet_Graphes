@@ -53,8 +53,8 @@ public class Metro {
         }
     }
 
-    public void lireStations(String nomFichier) {
-        try (BufferedReader br = new BufferedReader(new FileReader(nomFichier))) {
+    public void lireStations(String fichier) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fichier))) {
             String ligne;
             while ((ligne = br.readLine()) != null) {
                 // Ignorer les lignes vides
