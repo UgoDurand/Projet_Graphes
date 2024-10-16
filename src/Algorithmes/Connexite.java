@@ -7,22 +7,22 @@ import java.util.Set;
 /**
 public class Connexite {
 
-    public static boolean estConnexe(Graphe graphe) {
-        if (graphe.getStations().isEmpty()) {
+    public static boolean estConnexe(Metro metro) {
+        if (metro.getStations().isEmpty()) {
             System.out.println("Le graphe est vide.");
             return false;
         }
 
         Set<Station> visitees = new HashSet<>();
-        Station stationDepart = graphe.getStations().iterator().next(); // Prendre la première station
-        parcours_profondeur(stationDepart, graphe, visitees);
+        Station stationDepart = metro.getStations().iterator().next(); // Prendre la première station
+        parcours_profondeur(stationDepart, metro.getGraphe(), visitees);
 
-        return visitees.size() == graphe.getStations().size();
+        return visitees.size() == metro.getStations().size();
     }
 
     private static void parcours_profondeur(Station station, Graphe graphe, Set<Station> visitees) {
         visitees.add(station);
-        for (Liaison liaison : graphe.getLiaisons(station)) {
+        for (Liaison liaison : graphe.getLiaisons()) {
             Station stationSuivante = liaison.getStation2();
             if (!visitees.contains(stationSuivante)) {
                 parcours_profondeur(stationSuivante, graphe, visitees);
@@ -53,5 +53,4 @@ public class Connexite {
     }
 
 
-}
- **/
+} **/

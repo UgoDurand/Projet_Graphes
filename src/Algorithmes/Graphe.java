@@ -23,6 +23,27 @@ public class Graphe {
         }
     }
 
+    public boolean estConnexe(List<Station> stations) {
+        if (stations.isEmpty()) {
+            return true;
+        }
+
+        Set<Station> visites = new HashSet<>();
+        Station premiereStation = stations.get(0);
+        parcours_largeur(premiereStation, visites);
+        return visites.size() == stations.size();
+    }
+
+    private void parcours_largeur(Station station, Set<Station> visites) {
+        visites.add(station);
+
+        for (Liaison liaison : adjacences) {
+            if (liaison.getStation1().equals(station) && !visites.contains(liaison.getStation2())) {
+                parcours_largeur(liaison.getStation2(), visites);
+            }
+        }
+    }
+
     public List<Station> plusCourtChemin(Station depart, Station arrivee) {
         List<StationDistance> distances = new ArrayList<>();
         List<Predecesseur> predecesseurs = new ArrayList<>();

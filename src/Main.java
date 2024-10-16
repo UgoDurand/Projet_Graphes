@@ -1,7 +1,4 @@
-import Algorithmes.Graphe;
-import Algorithmes.Liaison;
-import Algorithmes.Metro;
-import Algorithmes.Station;
+import Algorithmes.*;
 
 import java.util.List;
 
@@ -34,5 +31,6 @@ public class Main {
             System.out.println("Aucun chemin trouvé entre " + stationDepart.getNom() + " et " + stationArrivee.getNom());
         }
 
+        System.out.println(graphe.estConnexe(metro.getStations()));
     }
 }
