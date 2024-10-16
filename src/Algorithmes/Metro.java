@@ -111,7 +111,7 @@ public class Metro {
                 }
 
                 // Ajouter la station au graphe
-                Station station = new Station(numSommet, nomSommet, numeroLigne, siTerminus, branchement);
+                Station station = new Station(numSommet, nomSommet, "numeroLigne", siTerminus, branchement);
                 System.out.println("Station ajoutée : " + station);  // Debug station ajoutée
                 this.stations.put(numSommet, station);
             }
