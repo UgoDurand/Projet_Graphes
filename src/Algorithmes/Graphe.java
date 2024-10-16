@@ -3,104 +3,112 @@ package Algorithmes;
 import java.util.*;
 
 public class Graphe {
-
-    private Map<Station, List<Liaison>> adjacence;
-    private Map<String, Station> stations;
-    private List<Liaison> liaisons;
+    private ArrayList<Liaison> adjacences;  // pour stocker toutes les liaisons
 
     public Graphe() {
-        adjacence = new HashMap<>();
-        stations = new HashMap<>();
-        liaisons = new ArrayList<>();
+        adjacences = new ArrayList<>();
     }
 
-    public void ajouterStation(Station station) {
-        adjacence.putIfAbsent(station, new ArrayList<>());
-        stations.putIfAbsent(station.getNom(), station);
-        System.out.println("Station ajoutée : " + station.getNom());
+    public void ajouterLiaison(Station station1, Station station2, int temps) {
+        Liaison liaison = new Liaison(station1, station2, temps);
+        adjacences.add(liaison);
+
+        Liaison liaisonInverse = new Liaison(station2, station1, temps);
+        adjacences.add(liaisonInverse);
     }
 
-    public Station getStation(String nom) {
-        return stations.get(nom);
-    }
-
-    public void ajouterLiaison(Station station1, Station station2, int poids) {
-        adjacence.get(station1).add(new Liaison(station1, station2, poids));
-        adjacence.get(station2).add(new Liaison(station2, station1, poids));
-    }
-
-    public List<Liaison> getLiaisons(Station station) {
-        return adjacence.get(station);
-    }
-
-    public Set<Station> getStations() {
-        return adjacence.keySet();
-    }
-
-    // Algorithme de Dijkstra pour trouver le plus court chemin
-    public List<Station> plusCourtChemin(Station depart, Station arrivee) {
-
-        Map<Station, Integer> distances = new HashMap<>();
-        Map<Station, Station> precedents = new HashMap<>();
-        PriorityQueue<Station> file = new PriorityQueue<>(Comparator.comparingInt(distances::get));
-
-        // Initialiser les distances avec l'infini
-        for (Station station : adjacence.keySet()) {
-            distances.put(station, Integer.MAX_VALUE);
+    public void construireGraphe(ArrayList<Station> stations, ArrayList<Liaison> liaisons) {
+        for (Liaison liaison : liaisons) {
+            ajouterLiaison(liaison.getStation1(), liaison.getStation2(), liaison.getPoids());
         }
-        distances.put(depart, 0);
-        file.add(depart);
+    }
 
-        while (!file.isEmpty()) {
-            Station stationActuelle = file.poll();  // Station avec la distance minimale
+    public List<Station> plusCourtChemin(Station depart, Station arrivee) {
+        List<StationDistance> distances = new ArrayList<>();
+        List<Predecesseur> predecesseurs = new ArrayList<>();
+        PriorityQueue<StationDistance> filePriorite = new PriorityQueue<>(Comparator.comparingInt(sd -> sd.distance));
+        Set<Station> visites = new HashSet<>();
 
-            // Si on atteint la station d'arrivée, on peut arrêter
-            if (stationActuelle.equals(arrivee)) {
-                break;
+        distances.add(new StationDistance(depart, 0));
+        filePriorite.add(new StationDistance(depart, 0));
+
+        while (!filePriorite.isEmpty()) {
+            StationDistance current = filePriorite.poll();
+            Station currentStation = current.station;
+
+            if (visites.contains(currentStation)) continue;
+
+            visites.add(currentStation);
+
+            if (currentStation.equals(arrivee)) {
+                return reconstruireChemin(predecesseurs, arrivee);
             }
 
-            // Parcourir les voisins de la station actuelle
-            for (Liaison liaison : adjacence.get(stationActuelle)) {
-                Station voisin = liaison.getStation2();
-                int nouvelleDistance = distances.get(stationActuelle) + liaison.getPoids();
+            for (Liaison liaison : adjacences) {
+                if (liaison.getStation1().equals(currentStation)) {
+                    Station voisin = liaison.getStation2();
+                    int nouvelleDistance = getDistance(distances, currentStation) + liaison.getPoids();
 
-                // Si on trouve un chemin plus court vers ce voisin, on met à jour
-                if (nouvelleDistance < distances.get(voisin)) {
-                    distances.put(voisin, nouvelleDistance);
-                    precedents.put(voisin, stationActuelle);
-                    file.add(voisin);
+                    if (nouvelleDistance < getDistance(distances, voisin)) {
+                        updateDistance(distances, voisin, nouvelleDistance);
+                        predecesseurs.add(new Predecesseur(voisin, currentStation));
+                        filePriorite.add(new StationDistance(voisin, nouvelleDistance));
+                    }
                 }
             }
         }
 
-        // Reconstruire le chemin depuis la station d'arrivée
-        List<Station> chemin = new ArrayList<>();
-        for (Station station = arrivee; station != null; station = precedents.get(station)) {
-            chemin.add(station);
-        }
-        Collections.reverse(chemin);  // Le chemin est reconstruit à l'envers
+        return new ArrayList<>();
+    }
 
-        return chemin.isEmpty() || chemin.get(0) != depart ? new ArrayList<>() : chemin;  // Retourner le chemin ou une liste vide si aucun chemin trouvé
+    private int getDistance(List<StationDistance> distances, Station station) {
+        for (StationDistance stationDistance : distances) {
+            if (stationDistance.station.equals(station)) {
+                return stationDistance.distance;
+            }
+        }
+        return Integer.MAX_VALUE;
+    }
+
+    private void updateDistance(List<StationDistance> distances, Station station, int nouvelleDistance) {
+        boolean updated = false;
+        for (StationDistance sd : distances) {
+            if (sd.station.equals(station)) {
+                sd.distance = nouvelleDistance;
+                updated = true;
+                break;
+            }
+        }
+        if (!updated) {
+            distances.add(new StationDistance(station, nouvelleDistance));
+        }
+    }
+
+    private List<Station> reconstruireChemin(List<Predecesseur> predecesseurs, Station arrivee) {
+        List<Station> chemin = new ArrayList<>();
+        Station stationActuelle = arrivee;
+
+        while (stationActuelle != null) {
+            chemin.add(0, stationActuelle);
+            stationActuelle = getPredecesseur(predecesseurs, stationActuelle);
+        }
+
+        return chemin;
+    }
+
+    private Station getPredecesseur(List<Predecesseur> predecesseurs, Station station) {
+        for (Predecesseur p : predecesseurs) {
+            if (p.station.equals(station)) {
+                return p.predecesseur;
+            }
+        }
+        return null;
     }
 
     public void afficherGraphe() {
-        // Afficher chaque station et ses liaisons
-        for (Station station : adjacence.keySet()) {
-            System.out.println("Station: " + station.getNom());
-            List<Liaison> liaisonsStation = adjacence.get(station);
-            if (liaisonsStation.isEmpty()) {
-                System.out.println("  Pas de liaisons.");
-            } else {
-                System.out.println("  Liaisons:");
-                for (Liaison liaison : liaisonsStation) {
-                    Station stationVoisin = liaison.getStation2();
-                    int poids = liaison.getPoids();
-                    System.out.println("    -> " + stationVoisin.getNom() + " (Poids: " + poids + ")");
-                }
-            }
+        for (Liaison liaison : adjacences) {
+            System.out.println(liaison.getStation1().getNom() + " (Ligne " + liaison.getStation1().getLigne() + ") --> " +
+                    liaison.getStation2().getNom() + " (" + liaison.getPoids() + "s)");
         }
-
-        System.out.println("Graphe vide");
     }
-
 }
