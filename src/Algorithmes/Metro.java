@@ -88,15 +88,7 @@ public class Metro {
         return stations;
     }
 
-    public void setStations(ArrayList<Station> stations) {
-        this.stations = stations;
-    }
-
     public ArrayList<Liaison> getLiaisons() {
         return liaisons;
-    }
-
-    public void setLiaisons(ArrayList<Liaison> liaisons) {
-        this.liaisons = liaisons;
     }
 }

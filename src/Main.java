@@ -17,7 +17,7 @@ public class Main {
         graphe.afficherGraphe();
 
         Station stationDepart = metro.getStations().get(0);
-        Station stationArrivee = metro.getStations().get(2);
+        Station stationArrivee = metro.getStations().get(1);
 
         List<Station> chemin = graphe.plusCourtChemin(stationDepart, stationArrivee);
 
@@ -31,6 +31,20 @@ public class Main {
             System.out.println("Aucun chemin trouvé entre " + stationDepart.getNom() + " et " + stationArrivee.getNom());
         }
 
-        System.out.println(graphe.estConnexe(metro.getStations()));
+        boolean estConnexe = graphe.estConnexe(metro.getStations());
+        System.out.println("Le graphe est-il connexe ? " + (estConnexe ? "Oui" : "Non"));
+
+        List<Liaison> arbreCouvrant = graphe.algorithmePrim(stationDepart, stationArrivee);
+        if (!arbreCouvrant.isEmpty()) {
+            System.out.println("Arbre couvrant minimal (Prim) à partir de " + stationDepart.getNom() + " (Ligne " + stationDepart.getLigne() + ") :");
+            for (Liaison liaison : arbreCouvrant) {
+                System.out.println(liaison.getStation1().getNom() + " (Ligne " + stationDepart.getLigne() + ")"+ " -> " + liaison.getStation2().getNom() +
+                        " (" + liaison.getPoids() + "s)");
+            }
+        } else {
+            System.out.println("Pas d'arbre couvrant trouvé.");
+        }
+
+        graphe.afficherItineraire(stationDepart, stationArrivee);
     }
 }

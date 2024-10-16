@@ -30,16 +30,16 @@ public class Graphe {
 
         Set<Station> visites = new HashSet<>();
         Station premiereStation = stations.get(0);
-        parcours_largeur(premiereStation, visites);
+        parcours_profondeur(premiereStation, visites);
         return visites.size() == stations.size();
     }
 
-    private void parcours_largeur(Station station, Set<Station> visites) {
+    private void parcours_profondeur(Station station, Set<Station> visites) {
         visites.add(station);
 
         for (Liaison liaison : adjacences) {
             if (liaison.getStation1().equals(station) && !visites.contains(liaison.getStation2())) {
-                parcours_largeur(liaison.getStation2(), visites);
+                parcours_profondeur(liaison.getStation2(), visites);
             }
         }
     }
@@ -131,5 +131,70 @@ public class Graphe {
             System.out.println(liaison.getStation1().getNom() + " (Ligne " + liaison.getStation1().getLigne() + ") --> " +
                     liaison.getStation2().getNom() + " (" + liaison.getPoids() + "s)");
         }
+    }
+
+    public List<Liaison> algorithmePrim(Station depart, Station arrivee) {
+        Set<Station> arbreCouvrant = new HashSet<>();
+        List<Liaison> liaisonsArbre = new ArrayList<>();
+        PriorityQueue<Liaison> filePriorite = new PriorityQueue<>(Comparator.comparingInt(Liaison::getPoids));
+
+        arbreCouvrant.add(depart);
+
+        for (Liaison liaison : adjacences) {
+            if (liaison.getStation1().equals(depart)) {
+                filePriorite.add(liaison);
+            }
+        }
+
+        while (!filePriorite.isEmpty()) {
+            Liaison liaison = filePriorite.poll();
+            Station stationVoisine = liaison.getStation2();
+
+            if (!arbreCouvrant.contains(stationVoisine)) {
+                arbreCouvrant.add(stationVoisine);
+                liaisonsArbre.add(liaison);
+
+                if (stationVoisine.equals(arrivee)) {
+                    return liaisonsArbre;  // Retourner les liaisons utilisées pour atteindre l'arrivée
+                }
+
+                for (Liaison prochaineLiaison : adjacences) {
+                    if (prochaineLiaison.getStation1().equals(stationVoisine) && !arbreCouvrant.contains(prochaineLiaison.getStation2())) {
+                        filePriorite.add(prochaineLiaison);
+                    }
+                }
+            }
+        }
+
+        return new ArrayList<>();
+    }
+
+    public void afficherItineraire(Station depart, Station arrivee) {
+        List<Liaison> liaisonsArbre = algorithmePrim(depart, arrivee);
+        if (liaisonsArbre.isEmpty()) {
+            System.out.println("Aucun chemin trouvé entre " + depart.getNom() + " et " + arrivee.getNom() + ".");
+            return;
+        }
+
+        int totalTemps = 0;
+        Liaison liaisonPrecedente = null;
+
+        System.out.println("Vous êtes à " + depart.getNom() + ".");
+
+        for (Liaison liaison : liaisonsArbre) {
+            totalTemps += liaison.getPoids();
+
+            if (liaisonPrecedente != null && !liaison.getStation1().getLigne().equals(liaisonPrecedente.getStation1().getLigne())) {
+                System.out.println("- A " + liaisonPrecedente.getStation2().getNom() + ", changez et prenez la ligne " +
+                        liaison.getStation1().getLigne() + " direction " + liaison.getStation2().getNom() + ".");
+            } else if (liaisonPrecedente == null) {
+                System.out.println("- Prenez la ligne " + liaison.getStation1().getLigne() + " direction " + liaison.getStation2().getNom() + ".");
+            }
+
+            liaisonPrecedente = liaison;
+        }
+
+        // Arrivée finale
+        System.out.println("- Vous devriez arriver à " + arrivee.getNom() + " dans environ " + totalTemps + " minutes.");
     }
 }
