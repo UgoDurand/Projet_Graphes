@@ -4,11 +4,19 @@ public class Liaison {
     private Station station1;  // Première station
     private Station station2;  // Deuxième station
     private int temps;         // Temps en secondes entre les deux stations
+    private String ligneMetro;
 
     public Liaison(Station station1, Station station2, int temps) {
         this.station1 = station1;
         this.station2 = station2;
         this.temps = temps;  // Le poids
+    }
+
+    public Liaison(Station station1, Station station2, String ligneMetro, int temps) {
+        this.station1 = station1;
+        this.station2 = station2;
+        this.ligneMetro = ligneMetro;
+        this.temps = temps;
     }
 
    public Station getStation1() {
@@ -21,6 +29,10 @@ public class Liaison {
 
    public int getPoids() {
         return temps;
+   }
+
+   public String getLigneMetro() {
+        return ligneMetro;
    }
 
     @Override
