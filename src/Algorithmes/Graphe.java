@@ -171,6 +171,7 @@ public class Graphe {
 
     public void afficherItineraire(Station depart, Station arrivee) {
         List<Liaison> liaisonsArbre = algorithmePrim(depart, arrivee);
+
         if (liaisonsArbre.isEmpty()) {
             System.out.println("Aucun chemin trouvé entre " + depart.getNom() + " et " + arrivee.getNom() + ".");
             return;
@@ -185,7 +186,7 @@ public class Graphe {
             totalTemps += liaison.getPoids();
 
             if (liaisonPrecedente != null && !liaison.getStation1().getLigne().equals(liaisonPrecedente.getStation1().getLigne())) {
-                System.out.println("- A " + liaisonPrecedente.getStation2().getNom() + ", changez et prenez la ligne " +
+                System.out.println("- À " + liaisonPrecedente.getStation2().getNom() + ", changez et prenez la ligne " +
                         liaison.getStation1().getLigne() + " direction " + liaison.getStation2().getNom() + ".");
             } else if (liaisonPrecedente == null) {
                 System.out.println("- Prenez la ligne " + liaison.getStation1().getLigne() + " direction " + liaison.getStation2().getNom() + ".");
@@ -194,7 +195,25 @@ public class Graphe {
             liaisonPrecedente = liaison;
         }
 
-        // Arrivée finale
-        System.out.println("- Vous devriez arriver à " + arrivee.getNom() + " dans environ " + totalTemps + " minutes.");
+        // Convert total time from seconds to a more readable format (minutes or hours)
+        String formattedTime = formatTime(totalTemps);
+
+        // Final arrival statement
+        System.out.println("- Vous devriez arriver à " + arrivee.getNom() + " dans environ " + formattedTime);
     }
+
+    private String formatTime(int totalSeconds) {
+        if (totalSeconds < 60) {
+            return totalSeconds + " secondes";
+        } else if (totalSeconds < 3600) {
+            int minutes = totalSeconds / 60;
+            int seconds = totalSeconds % 60;
+            return minutes + " minute" + (minutes > 1 ? "s" : "") + (seconds > 0 ? " et " + seconds + " seconde" + (seconds > 1 ? "s" : "") : "");
+        } else {
+            int hours = totalSeconds / 3600;
+            int minutes = (totalSeconds % 3600) / 60;
+            return hours + " heure" + (hours > 1 ? "s" : "") + (minutes > 0 ? " et " + minutes + " minute" + (minutes > 1 ? "s" : "") : "");
+        }
+    }
+
 }

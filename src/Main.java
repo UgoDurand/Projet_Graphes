@@ -1,6 +1,7 @@
 import Algorithmes.*;
 
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
 
@@ -16,8 +17,20 @@ public class Main {
         graphe.construireGraphe(metro.getStations(), metro.getLiaisons());
         graphe.afficherGraphe();
 
-        Station stationDepart = metro.getStations().get(0);
-        Station stationArrivee = metro.getStations().get(1);
+        System.out.println("Sélectionnez une station de départ parmi les stations suivante :");
+        List<Station> stations = metro.getStations();
+        for(int i = 0; i < stations.size(); i++){
+            System.out.println(i + ": " + stations.get(i).getNom() + " (Ligne " + stations.get(i).getLigne() + ")");
+        }
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Entrez le numero de la station de départ :");
+        int depart = scanner.nextInt();
+        Station stationDepart = stations.get(depart);
+
+        System.out.println("Entrez le numero de la station d'arrivée :");
+        int arrivee = scanner.nextInt();
+        Station stationArrivee = stations.get(arrivee);
 
         List<Station> chemin = graphe.plusCourtChemin(stationDepart, stationArrivee);
 
