@@ -65,6 +65,7 @@ public class Main {
         } else {
             System.out.println("Aucun chemin trouvé entre " + stationDepart.getNom() + " et " + stationArrivee.getNom());
         }
+        graphe.afficherItineraire(chemin);
 
         // Vérification de la connexité du graphe
         boolean estConnexe = graphe.estConnexe(metro.getStations());
@@ -74,7 +75,7 @@ public class Main {
         afficherACPM(graphe, stationDepart, stationArrivee);
 
         // Affichage de l'itinéraire entre les deux stations sélectionnées
-        graphe.afficherItineraire(stationDepart, stationArrivee);
+        graphe.afficherItineraire(chemin);
 
         // Affichage de l'arbre couvrant minimal entre la première et la dernière station
         Station station1 = stations.get(0);
