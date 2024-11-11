@@ -192,30 +192,48 @@ public class Graphe {
      * @return Liste des liaisons formant l'arbre couvrant minimum jusqu'à la station d'arrivée.
      */
     public List<Liaison> algorithmePrim(Station depart, Station arrivee) {
+        // Utilisation d'un Set pour représenter les stations visitées (l'arbre couvrant)
         Set<Station> arbreCouvrant = new HashSet<>();
         List<Liaison> liaisonsArbre = new ArrayList<>();
         PriorityQueue<Liaison> filePriorite = new PriorityQueue<>(Comparator.comparingInt(Liaison::getPoids));
 
+        // Ajouter la station de départ à l'arbre
         arbreCouvrant.add(depart);
 
+        // Ajouter toutes les liaisons de la station de départ à la file de priorité
         for (Liaison liaison : adjacences) {
             if (liaison.getStation1().equals(depart)) {
                 filePriorite.add(liaison);
             }
         }
 
+        int poidsTotal = 0;
+
+        // Tant qu'il y a des liaisons à traiter et que l'on n'a pas visité toutes les stations
         while (!filePriorite.isEmpty()) {
+            // On prend la liaison avec le poids minimal
             Liaison liaison = filePriorite.poll();
             Station stationVoisine = liaison.getStation2();
 
+            // Si la station voisine n'a pas encore été visitée
             if (!arbreCouvrant.contains(stationVoisine)) {
+                // Ajouter la station voisine à l'arbre
                 arbreCouvrant.add(stationVoisine);
+                // Ajouter la liaison à l'arbre couvrant
                 liaisonsArbre.add(liaison);
+                // Accumuler le poids de cette liaison
+                poidsTotal += liaison.getPoids();
 
+                // Si la station voisine est la station d'arrivée, on peut arrêter
                 if (stationVoisine.equals(arrivee)) {
+                    System.out.println("Poids total de l'arbre couvrant minimum : " + poidsTotal + " secondes.");
+                    for (Liaison pro : liaisonsArbre){
+                        System.out.println(pro.getStation1().getNom());
+                    }
                     return liaisonsArbre;
                 }
 
+                // Ajouter toutes les liaisons sortantes de la station voisine dans la file de priorité
                 for (Liaison prochaineLiaison : adjacences) {
                     if (prochaineLiaison.getStation1().equals(stationVoisine) && !arbreCouvrant.contains(prochaineLiaison.getStation2())) {
                         filePriorite.add(prochaineLiaison);
@@ -224,8 +242,12 @@ public class Graphe {
             }
         }
 
+        // Si le programme arrive ici, cela signifie qu'il n'y a pas de chemin complet entre les stations
+        System.out.println("Poids total de l'arbre couvrant minimum : " + poidsTotal + " secondes.");
         return new ArrayList<>();
     }
+
+
 
     /**
      *  @autor : Ugo
@@ -285,5 +307,41 @@ public class Graphe {
             return hours + " heure" + (hours > 1 ? "s" : "") + (minutes > 0 ? " et " + minutes + " minute" + (minutes > 1 ? "s" : "") : "");
         }
     }
+
+    /**
+     * Obtient toutes les liaisons associées à une station donnée.
+     *
+     * @param station La station dont on veut connaître les liaisons.
+     * @return Liste des liaisons associées à la station.
+     */
+    public List<Liaison> getLiaisonsDeStation(Station station) {
+        List<Liaison> liaisonsDeStation = new ArrayList<>();
+        for (Liaison liaison : adjacences) {
+            if (liaison.getStation1().equals(station) || liaison.getStation2().equals(station)) {
+                liaisonsDeStation.add(liaison);
+            }
+        }
+        return liaisonsDeStation;
+    }
+
+    /**
+     * Obtient la liaison entre deux stations spécifiques.
+     *
+     * @param station1 La première station.
+     * @param station2 La deuxième station.
+     * @return La liaison entre les deux stations, ou null si aucune liaison n'existe entre elles.
+     */
+    public Liaison getLiaisonBetweenStations(Station station1, Station station2) {
+        // Parcourt toutes les liaisons pour vérifier si l'une d'elles relie les deux stations spécifiées
+        for (Liaison liaison : adjacences) {
+            if ((liaison.getStation1().equals(station1) && liaison.getStation2().equals(station2)) ||
+                    (liaison.getStation1().equals(station2) && liaison.getStation2().equals(station1))) {
+                return liaison; // Retourne la liaison si les deux stations sont reliées
+            }
+        }
+        return null; // Si aucune liaison n'a été trouvée entre les deux stations
+    }
+
+
 
 }

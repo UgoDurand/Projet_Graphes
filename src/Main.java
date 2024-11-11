@@ -76,10 +76,9 @@ public class Main {
         // Affichage de l'itinéraire entre les deux stations sélectionnées
         graphe.afficherItineraire(stationDepart, stationArrivee);
 
-        // Affichage de l'arbre couvrant minimal entre la première et la dernière station
+        // Affichage de l'arbre couvrant minimal du graphe
         Station station1 = stations.get(0);
-        Station station2 = stations.get(stations.size() - 1);
-        afficherACPM(graphe, station1, station2);
+        afficherACPM(graphe, station1, station1);
     }
 
     /**

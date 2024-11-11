@@ -12,6 +12,8 @@ public class Station {
     private String ligne;       // Ligne de métro à laquelle la station appartient
     private boolean estTerminus; // Indique si la station est un terminus
     private int branchement;    // Code de branchement pour la station
+    private double x;
+    private double y;
 
     /**
      * Constructeur de la classe Station.
@@ -28,6 +30,12 @@ public class Station {
         this.ligne = ligne;
         this.estTerminus = estTerminus;
         this.branchement = branchement;
+    }
+
+    public Station(String nom, double x, double y) {
+        this.nom = nom;
+        this.x = x;
+        this.y = y;
     }
 
     /**
@@ -73,6 +81,14 @@ public class Station {
      */
     public int getBranchement() {
         return branchement;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
     }
 
     /**

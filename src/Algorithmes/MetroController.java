@@ -53,7 +53,7 @@ public class MetroController {
         }
     }
 
-    private void afficherPlusCourtChemin() {
+    public void afficherPlusCourtChemin() {
         if (stationDepart != null && stationArrivee != null) {
             List<Station> chemin = graphe.plusCourtChemin(stationDepart, stationArrivee);
 
