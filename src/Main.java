@@ -43,6 +43,7 @@ public class Main {
         } else {
             System.out.println("Aucun chemin trouvé entre " + stationDepart.getNom() + " et " + stationArrivee.getNom());
         }
+        graphe.afficherItineraire(chemin);
 
         boolean estConnexe = graphe.estConnexe(metro.getStations());
         System.out.println("Le graphe est-il connexe ? " + (estConnexe ? "Oui" : "Non"));
@@ -58,6 +59,5 @@ public class Main {
             System.out.println("Pas d'arbre couvrant trouvé.");
         }
 
-        graphe.afficherItineraire(stationDepart, stationArrivee);
     }
 }

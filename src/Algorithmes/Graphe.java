@@ -169,38 +169,47 @@ public class Graphe {
         return new ArrayList<>();
     }
 
-    public void afficherItineraire(Station depart, Station arrivee) {
-        List<Liaison> liaisonsArbre = algorithmePrim(depart, arrivee);
-
-        if (liaisonsArbre.isEmpty()) {
-            System.out.println("Aucun chemin trouvé entre " + depart.getNom() + " et " + arrivee.getNom() + ".");
+    public void afficherItineraire(List<Station> chemin) {
+        if (chemin == null || chemin.isEmpty()) {
+            System.out.println("Aucun itinéraire disponible.");
             return;
         }
 
         int totalTemps = 0;
         Liaison liaisonPrecedente = null;
 
-        System.out.println("Vous êtes à " + depart.getNom() + ".");
+        System.out.println("Vous êtes à " + chemin.get(0).getNom() + ".");
+        System.out.println("- Prenez la ligne " + chemin.get(0).getLigne() + " direction " + chemin.get(1).getNom() + ".");
 
-        for (Liaison liaison : liaisonsArbre) {
-            totalTemps += liaison.getPoids();
+        String ligneActuelle = chemin.get(0).getLigne();
 
-            if (liaisonPrecedente != null && !liaison.getStation1().getLigne().equals(liaisonPrecedente.getStation1().getLigne())) {
-                System.out.println("- À " + liaisonPrecedente.getStation2().getNom() + ", changez et prenez la ligne " +
-                        liaison.getStation1().getLigne() + " direction " + liaison.getStation2().getNom() + ".");
-            } else if (liaisonPrecedente == null) {
-                System.out.println("- Prenez la ligne " + liaison.getStation1().getLigne() + " direction " + liaison.getStation2().getNom() + ".");
+        for (int i = 0; i < chemin.size() - 1; i++) {
+            Station stationCourante = chemin.get(i);
+            Station stationSuivante = chemin.get(i + 1);
+
+            for (Liaison liaison : adjacences) {
+                if (liaison.getStation1().equals(stationCourante) && liaison.getStation2().equals(stationSuivante)) {
+                    totalTemps += liaison.getPoids();
+                    if (liaisonPrecedente == null || !liaison.getStation1().getLigne().equals(liaisonPrecedente.getStation1().getLigne())) {
+                        liaisonPrecedente = liaison;
+                    }
+                    break;
+                }
             }
 
-            liaisonPrecedente = liaison;
+            if (!stationSuivante.getLigne().equals(ligneActuelle)) {
+                System.out.println("- À " + stationCourante.getNom() + ", changez et prenez la ligne " +
+                        stationSuivante.getLigne() + " direction " + stationSuivante.getNom() + ".");
+                ligneActuelle = stationSuivante.getLigne();
+            }
         }
 
-        // Convert total time from seconds to a more readable format (minutes or hours)
+        Station destination = chemin.get(chemin.size() - 1);
         String formattedTime = formatTime(totalTemps);
-
-        // Final arrival statement
-        System.out.println("- Vous devriez arriver à " + arrivee.getNom() + " dans environ " + formattedTime);
+        System.out.println("- Vous devriez arriver à " + destination.getNom() + " dans environ " + formattedTime + ".");
     }
+
+
 
     private String formatTime(int totalSeconds) {
         if (totalSeconds < 60) {
