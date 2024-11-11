@@ -2,11 +2,6 @@ package Algorithmes;
 
 import java.util.*;
 
-/**
- * La classe Graphe représente un graphe de stations interconnectées par des liaisons (temps de trajet en secondes).
- * Elle inclut des méthodes pour ajouter des liaisons, vérifier la connectivité, trouver des itinéraires optimaux
- * en utilisant Prim et afficher des détails du graphe.
- */
 public class Graphe {
     private ArrayList<Liaison> adjacences;  // pour stocker toutes les liaisons
 
@@ -272,6 +267,7 @@ public class Graphe {
         String formattedTime = formatTemps(totalTemps);
         System.out.println("- Vous devriez arriver à " + destination.getNom() + " dans environ " + formattedTime + ".");
     }
+
 
     /**
      *  @autor : Sahkana
