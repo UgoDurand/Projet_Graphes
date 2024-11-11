@@ -230,6 +230,7 @@ public class Graphe {
     /**
      *  @autor : Ugo
      * Affiche l'itinéraire optimal entre une station de départ et une station d'arrivée.
+     * @param chemin Liste ordonnée des stations pour le chemin le plus court.
      *
      */
     public void afficherItineraire(List<Station> chemin) {
