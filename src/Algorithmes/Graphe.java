@@ -41,11 +41,10 @@ public class Graphe {
     }
 
     /**
-     * @autor : Nam
-     * Vérifie si le graphe est connexe (toutes les stations sont accessibles les unes depuis les autres).
-     *
      * @param stations Liste des stations du graphe.
      * @return true si le graphe est connexe, sinon false.
+     * @autor : Nam
+     * Vérifie si le graphe est connexe (toutes les stations sont accessibles les unes depuis les autres).
      */
     public boolean estConnexe(List<Station> stations) {
         if (stations.isEmpty()) {
@@ -59,11 +58,10 @@ public class Graphe {
     }
 
     /**
-     *  @autor : Sahkana
-     * Effectue un parcours en profondeur à partir d'une station donnée.
-     *
      * @param station Station de départ pour le parcours.
      * @param visites Ensemble des stations déjà visitées.
+     * @autor : Sahkana
+     * Effectue un parcours en profondeur à partir d'une station donnée.
      */
     private void parcours_profondeur(Station station, Set<Station> visites) {
         visites.add(station);
@@ -76,12 +74,11 @@ public class Graphe {
     }
 
     /**
-     *  @autor : Sahkana
-     * Calcule le plus court chemin entre deux stations en utilisant l'algorithme de Dijkstra.
-     *
      * @param depart  Station de départ.
      * @param arrivee Station d'arrivée.
      * @return Liste ordonnée des stations pour le chemin le plus court, ou une liste vide si aucun chemin n'existe.
+     * @autor : Sahkana
+     * Calcule le plus court chemin entre deux stations en utilisant l'algorithme de Dijkstra.
      */
     public List<Station> plusCourtChemin(Station depart, Station arrivee) {
         List<StationDistance> distances = new ArrayList<>();
@@ -168,7 +165,7 @@ public class Graphe {
     }
 
     /**
-     *  @autor : Nam
+     * @autor : Nam
      * Affiche toutes les liaisons du graphe.
      */
     public void afficherGraphe() {
@@ -179,17 +176,19 @@ public class Graphe {
     }
 
     /**
-     *  @autor : Ugo
-     * Algorithme de Prim pour construire un arbre couvrant minimum depuis une station de départ.
-     *
      * @param depart  Station de départ.
      * @param arrivee Station d'arrivée.
      * @return Liste des liaisons formant l'arbre couvrant minimum jusqu'à la station d'arrivée.
+     * @autor : Ugo
+     * Algorithme de Prim pour construire un arbre couvrant minimum depuis une station de départ.
      */
     public List<Liaison> algorithmePrim(Station depart, Station arrivee) {
         Set<Station> arbreCouvrant = new HashSet<>();
         List<Liaison> liaisonsArbre = new ArrayList<>();
         PriorityQueue<Liaison> filePriorite = new PriorityQueue<>(Comparator.comparingInt(Liaison::getPoids));
+
+        // Variable pour accumuler le poids total
+        int poidsTotal = 0;
 
         arbreCouvrant.add(depart);
 
@@ -207,8 +206,11 @@ public class Graphe {
                 arbreCouvrant.add(stationVoisine);
                 liaisonsArbre.add(liaison);
 
+                poidsTotal += liaison.getPoids();
+
                 if (stationVoisine.equals(arrivee)) {
-                    return liaisonsArbre;  // Retourner les liaisons utilisées pour atteindre l'arrivée
+                    System.out.println("Poids total de l'arbre couvrant minimum : " + poidsTotal + " secondes.");
+                    return liaisonsArbre;
                 }
 
                 for (Liaison prochaineLiaison : adjacences) {
@@ -219,14 +221,15 @@ public class Graphe {
             }
         }
 
+        System.out.println("Poids total de l'arbre couvrant minimum : " + poidsTotal + " secondes.");
         return new ArrayList<>();
     }
 
+
     /**
-     *  @autor : Ugo
-     * Affiche l'itinéraire optimal entre une station de départ et une station d'arrivée.
      * @param chemin Liste ordonnée des stations pour le chemin le plus court.
-     *
+     * @autor : Ugo
+     * Affiche l'itinéraire optimal entre une station de départ et une station d'arrivée.
      */
     public void afficherItineraire(List<Station> chemin) {
         if (chemin == null || chemin.isEmpty()) {
@@ -270,11 +273,10 @@ public class Graphe {
 
 
     /**
-     *  @autor : Sahkana
-     * Formate le temps en secondes en minutes ou heures.
-     *
      * @param totalSecondes Temps total en secondes.
      * @return Temps formaté en chaînes de caractères (secondes, minutes ou heures).
+     * @autor : Sahkana
+     * Formate le temps en secondes en minutes ou heures.
      */
     private String formatTemps(int totalSecondes) {
         if (totalSecondes < 60) {

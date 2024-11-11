@@ -1,4 +1,7 @@
-import Algorithmes.*;
+import Algorithmes.Graphe;
+import Algorithmes.Liaison;
+import Algorithmes.Metro;
+import Algorithmes.Station;
 
 import java.util.List;
 import java.util.Scanner;
@@ -16,7 +19,7 @@ public class Main {
      * - Charger les stations et les liaisons depuis les fichiers de données.
      * - Afficher les stations et les liaisons.
      * - Permettre à l'utilisateur de sélectionner une station de départ et d'arrivée,
-     *   puis de calculer et afficher le plus court chemin entre ces stations.
+     * puis de calculer et afficher le plus court chemin entre ces stations.
      * - Vérifier si le graphe est connexe.
      * - Afficher l'arbre couvrant minimal à partir de la première et dernière station.
      *
@@ -75,21 +78,20 @@ public class Main {
         afficherACPM(graphe, stationDepart, stationArrivee);
 
         // Affichage de l'itinéraire entre les deux stations sélectionnées
-        graphe.afficherItineraire(chemin);
+        //graphe.afficherItineraire(chemin);
 
         // Affichage de l'arbre couvrant minimal entre la première et la dernière station
         Station station1 = stations.get(0);
         Station station2 = stations.get(stations.size() - 1);
-        afficherACPM(graphe, station1, station2);
+        afficherACPM(graphe, station1, station1);
     }
 
     /**
-     * @author Sahkana
-     * Affiche l'arbre couvrant minimal calculé par l'algorithme de Prim.
-     *
-     * @param graphe Le graphe dans lequel calculer l'arbre couvrant.
+     * @param graphe   Le graphe dans lequel calculer l'arbre couvrant.
      * @param station1 La station de départ de l'algorithme de Prim.
      * @param station2 La station d'arrivée de l'algorithme de Prim.
+     * @author Sahkana
+     * Affiche l'arbre couvrant minimal calculé par l'algorithme de Prim.
      */
     private static void afficherACPM(Graphe graphe, Station station1, Station station2) {
         // Calcul de l'arbre couvrant minimal entre station1 et station2
