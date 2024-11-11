@@ -2,13 +2,29 @@ package Algorithmes;
 
 import java.util.*;
 
+/**
+ * La classe Graphe représente un graphe de stations interconnectées par des liaisons (temps de trajet en secondes).
+ * Elle inclut des méthodes pour ajouter des liaisons, vérifier la connectivité, trouver des itinéraires optimaux
+ * en utilisant Prim et afficher des détails du graphe.
+ */
 public class Graphe {
     private ArrayList<Liaison> adjacences;  // pour stocker toutes les liaisons
 
+    /**
+     * Constructeur de la classe Graphe.
+     * Initialise la liste des liaisons.
+     */
     public Graphe() {
         adjacences = new ArrayList<>();
     }
 
+    /**
+     * Ajoute une liaison bidirectionnelle entre deux stations avec un poids donné (temps).
+     *
+     * @param station1 Première station de la liaison.
+     * @param station2 Deuxième station de la liaison.
+     * @param temps    Temps de trajet entre les deux stations en secondes.
+     */
     public void ajouterLiaison(Station station1, Station station2, int temps) {
         Liaison liaison = new Liaison(station1, station2, temps);
         adjacences.add(liaison);
@@ -17,12 +33,25 @@ public class Graphe {
         adjacences.add(liaisonInverse);
     }
 
+    /**
+     * Construit le graphe en ajoutant une liste de liaisons entre les stations.
+     *
+     * @param stations Liste des stations du graphe.
+     * @param liaisons Liste des liaisons à ajouter au graphe.
+     */
     public void construireGraphe(ArrayList<Station> stations, ArrayList<Liaison> liaisons) {
         for (Liaison liaison : liaisons) {
             ajouterLiaison(liaison.getStation1(), liaison.getStation2(), liaison.getPoids());
         }
     }
 
+    /**
+     * @autor : Nam
+     * Vérifie si le graphe est connexe (toutes les stations sont accessibles les unes depuis les autres).
+     *
+     * @param stations Liste des stations du graphe.
+     * @return true si le graphe est connexe, sinon false.
+     */
     public boolean estConnexe(List<Station> stations) {
         if (stations.isEmpty()) {
             return true;
@@ -34,6 +63,13 @@ public class Graphe {
         return visites.size() == stations.size();
     }
 
+    /**
+     *  @autor : Sahkana
+     * Effectue un parcours en profondeur à partir d'une station donnée.
+     *
+     * @param station Station de départ pour le parcours.
+     * @param visites Ensemble des stations déjà visitées.
+     */
     private void parcours_profondeur(Station station, Set<Station> visites) {
         visites.add(station);
 
@@ -44,6 +80,14 @@ public class Graphe {
         }
     }
 
+    /**
+     *  @autor : Sahkana
+     * Calcule le plus court chemin entre deux stations en utilisant l'algorithme de Dijkstra.
+     *
+     * @param depart  Station de départ.
+     * @param arrivee Station d'arrivée.
+     * @return Liste ordonnée des stations pour le chemin le plus court, ou une liste vide si aucun chemin n'existe.
+     */
     public List<Station> plusCourtChemin(Station depart, Station arrivee) {
         List<StationDistance> distances = new ArrayList<>();
         List<Predecesseur> predecesseurs = new ArrayList<>();
@@ -81,6 +125,8 @@ public class Graphe {
 
         return new ArrayList<>();
     }
+
+    // Méthodes privées pour la gestion des distances et des prédécesseurs
 
     private int getDistance(List<StationDistance> distances, Station station) {
         for (StationDistance stationDistance : distances) {
@@ -126,6 +172,10 @@ public class Graphe {
         return null;
     }
 
+    /**
+     *  @autor : Nam
+     * Affiche toutes les liaisons du graphe.
+     */
     public void afficherGraphe() {
         for (Liaison liaison : adjacences) {
             System.out.println(liaison.getStation1().getNom() + " (Ligne " + liaison.getStation1().getLigne() + ") --> " +
@@ -133,6 +183,14 @@ public class Graphe {
         }
     }
 
+    /**
+     *  @autor : Ugo
+     * Algorithme de Prim pour construire un arbre couvrant minimum depuis une station de départ.
+     *
+     * @param depart  Station de départ.
+     * @param arrivee Station d'arrivée.
+     * @return Liste des liaisons formant l'arbre couvrant minimum jusqu'à la station d'arrivée.
+     */
     public List<Liaison> algorithmePrim(Station depart, Station arrivee) {
         Set<Station> arbreCouvrant = new HashSet<>();
         List<Liaison> liaisonsArbre = new ArrayList<>();
@@ -155,7 +213,7 @@ public class Graphe {
                 liaisonsArbre.add(liaison);
 
                 if (stationVoisine.equals(arrivee)) {
-                    return liaisonsArbre;  // Retourner les liaisons utilisées pour atteindre l'arrivée
+                    return liaisonsArbre;
                 }
 
                 for (Liaison prochaineLiaison : adjacences) {
@@ -169,8 +227,16 @@ public class Graphe {
         return new ArrayList<>();
     }
 
+    /**
+     *  @autor : Ugo
+     * Affiche l'itinéraire optimal entre une station de départ et une station d'arrivée.
+     *
+     * @param depart  Station de départ.
+     * @param arrivee Station d'arrivée.
+     */
     public void afficherItineraire(Station depart, Station arrivee) {
         List<Liaison> liaisonsArbre = algorithmePrim(depart, arrivee);
+
         if (liaisonsArbre.isEmpty()) {
             System.out.println("Aucun chemin trouvé entre " + depart.getNom() + " et " + arrivee.getNom() + ".");
             return;
@@ -185,7 +251,7 @@ public class Graphe {
             totalTemps += liaison.getPoids();
 
             if (liaisonPrecedente != null && !liaison.getStation1().getLigne().equals(liaisonPrecedente.getStation1().getLigne())) {
-                System.out.println("- A " + liaisonPrecedente.getStation2().getNom() + ", changez et prenez la ligne " +
+                System.out.println("- À " + liaisonPrecedente.getStation2().getNom() + ", changez et prenez la ligne " +
                         liaison.getStation1().getLigne() + " direction " + liaison.getStation2().getNom() + ".");
             } else if (liaisonPrecedente == null) {
                 System.out.println("- Prenez la ligne " + liaison.getStation1().getLigne() + " direction " + liaison.getStation2().getNom() + ".");
@@ -194,7 +260,30 @@ public class Graphe {
             liaisonPrecedente = liaison;
         }
 
-        // Arrivée finale
-        System.out.println("- Vous devriez arriver à " + arrivee.getNom() + " dans environ " + totalTemps + " minutes.");
+        String formattedTime = formatTemps(totalTemps);
+
+        System.out.println("- Vous devriez arriver à " + arrivee.getNom() + " dans environ " + formattedTime);
     }
+
+    /**
+     *  @autor : Sahkana
+     * Formate le temps en secondes en minutes ou heures.
+     *
+     * @param totalSecondes Temps total en secondes.
+     * @return Temps formaté en chaînes de caractères (secondes, minutes ou heures).
+     */
+    private String formatTemps(int totalSecondes) {
+        if (totalSecondes < 60) {
+            return totalSecondes + " secondes";
+        } else if (totalSecondes < 3600) {
+            int minutes = totalSecondes / 60;
+            int seconds = totalSecondes % 60;
+            return minutes + " minute" + (minutes > 1 ? "s" : "") + (seconds > 0 ? " et " + seconds + " seconde" + (seconds > 1 ? "s" : "") : "");
+        } else {
+            int hours = totalSecondes / 3600;
+            int minutes = (totalSecondes % 3600) / 60;
+            return hours + " heure" + (hours > 1 ? "s" : "") + (minutes > 0 ? " et " + minutes + " minute" + (minutes > 1 ? "s" : "") : "");
+        }
+    }
+
 }
