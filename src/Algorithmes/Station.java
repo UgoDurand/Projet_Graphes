@@ -1,12 +1,27 @@
 package Algorithmes;
 
+/**
+ * @author Ugo
+ * La classe Station représente une station de métro avec ses caractéristiques
+ * telles que son identifiant, son nom, la ligne sur laquelle elle se trouve, si elle est un terminus,
+ * et les informations de branchement.
+ */
 public class Station {
-    private int id;           // Numéro du sommet
-    private String nom;          // Nom de la station
-    private String ligne;           // Numéro de la ligne de métro
-    private boolean estTerminus; // Si la station est un terminus
-    private int branchement;     // Informations sur les branchements
+    private int id;             // Identifiant unique de la station
+    private String nom;         // Nom de la station
+    private String ligne;       // Ligne de métro à laquelle la station appartient
+    private boolean estTerminus; // Indique si la station est un terminus
+    private int branchement;    // Code de branchement pour la station
 
+    /**
+     * Constructeur de la classe Station.
+     *
+     * @param id           Identifiant unique de la station.
+     * @param nom          Nom de la station.
+     * @param ligne        Ligne de métro à laquelle la station appartient.
+     * @param estTerminus  Indique si la station est un terminus.
+     * @param branchement  Code de branchement de la station.
+     */
     public Station(int id, String nom, String ligne, boolean estTerminus, int branchement) {
         this.id = id;
         this.nom = nom;
@@ -15,27 +30,56 @@ public class Station {
         this.branchement = branchement;
     }
 
-    // Getters et setters
+    /**
+     * Retourne l'identifiant unique de la station.
+     *
+     * @return L'identifiant de la station.
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Retourne le nom de la station.
+     *
+     * @return Nom de la station.
+     */
     public String getNom() {
         return nom;
     }
 
+    /**
+     * Retourne la ligne de métro à laquelle la station appartient.
+     *
+     * @return Ligne de la station.
+     */
     public String getLigne() {
         return ligne;
     }
 
+    /**
+     * Indique si la station est un terminus.
+     *
+     * @return true si la station est un terminus, sinon false.
+     */
     public boolean isEstTerminus() {
         return estTerminus;
     }
 
+    /**
+     * Retourne les informations de branchement de la station.
+     *
+     * @return Code de branchement de la station.
+     */
     public int getBranchement() {
         return branchement;
     }
 
+    /**
+     * Retourne une représentation textuelle de la station, incluant son nom et sa ligne.
+     *
+     * @return Chaîne de caractères représentant la station sous la forme "nom (Ligne ligne)".
+     */
     @Override
     public String toString() {
         return nom + " (Ligne " + ligne + ")";
