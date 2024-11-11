@@ -31,13 +31,17 @@ public class Main {
         Metro metro = new Metro();
         metro.lireStations();  // Lecture des stations depuis le fichier
         metro.lireLiaisons();  // Lecture des liaisons depuis le fichier
-        metro.afficherStations();  // Affichage des stations
-        metro.afficherLiaisons();  // Affichage des liaisons
+        //metro.afficherStations();  // Affichage des stations
+        //metro.afficherLiaisons();  // Affichage des liaisons
 
         // Création du graphe à partir des stations et liaisons
         Graphe graphe = new Graphe();
         graphe.construireGraphe(metro.getStations(), metro.getLiaisons());
         graphe.afficherGraphe();  // Affichage du graphe
+
+        // Vérification de la connexité du graphe
+        boolean estConnexe = graphe.estConnexe(metro.getStations());
+        System.out.println("Le graphe est-il connexe ? " + (estConnexe ? "Oui" : "Non"));
 
         // Sélection de la station de départ et de la station d'arrivée
         System.out.println("Sélectionnez une station de départ parmi les stations suivantes :");
@@ -68,34 +72,24 @@ public class Main {
         } else {
             System.out.println("Aucun chemin trouvé entre " + stationDepart.getNom() + " et " + stationArrivee.getNom());
         }
-        graphe.afficherItineraire(chemin);
-
-        // Vérification de la connexité du graphe
-        boolean estConnexe = graphe.estConnexe(metro.getStations());
-        System.out.println("Le graphe est-il connexe ? " + (estConnexe ? "Oui" : "Non"));
-
-        // Affichage de l'arbre couvrant minimal (algorithme de Prim)
-        afficherACPM(graphe, stationDepart, stationArrivee);
 
         // Affichage de l'itinéraire entre les deux stations sélectionnées
-        //graphe.afficherItineraire(chemin);
+        graphe.afficherItineraire(chemin);
 
-        // Affichage de l'arbre couvrant minimal entre la première et la dernière station
-        Station station1 = stations.get(0);
-        Station station2 = stations.get(stations.size() - 1);
-        afficherACPM(graphe, station1, station1);
+        // Affichage de l'arbre couvrant minimal du graphe
+        Station station1 = stations.getFirst();
+        afficherACPM(graphe, station1);
     }
 
     /**
      * @param graphe   Le graphe dans lequel calculer l'arbre couvrant.
      * @param station1 La station de départ de l'algorithme de Prim.
-     * @param station2 La station d'arrivée de l'algorithme de Prim.
      * @author Sahkana
      * Affiche l'arbre couvrant minimal calculé par l'algorithme de Prim.
      */
-    private static void afficherACPM(Graphe graphe, Station station1, Station station2) {
+    private static void afficherACPM(Graphe graphe, Station station1) {
         // Calcul de l'arbre couvrant minimal entre station1 et station2
-        List<Liaison> arbreCouvrantGraphe = graphe.algorithmePrim(station1, station2);
+        List<Liaison> arbreCouvrantGraphe = graphe.algorithmePrim(station1);
 
         if (!arbreCouvrantGraphe.isEmpty()) {
             System.out.println("Arbre couvrant minimal (Prim) à partir de " + station1.getNom() + " (Ligne " + station1.getLigne() + ") :");

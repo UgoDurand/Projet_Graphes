@@ -180,14 +180,13 @@ public class Graphe {
      * @param arrivee Station d'arrivée.
      * @return Liste des liaisons formant l'arbre couvrant minimum jusqu'à la station d'arrivée.
      * @autor : Ugo
-     * Algorithme de Prim pour construire un arbre couvrant minimum depuis une station de départ.
+     * Algorithme de Prim pour construire un arbre couvrant minimum depuis une station de départ et d'arrivée.
      */
     public List<Liaison> algorithmePrim(Station depart, Station arrivee) {
         Set<Station> arbreCouvrant = new HashSet<>();
         List<Liaison> liaisonsArbre = new ArrayList<>();
         PriorityQueue<Liaison> filePriorite = new PriorityQueue<>(Comparator.comparingInt(Liaison::getPoids));
 
-        // Variable pour accumuler le poids total
         int poidsTotal = 0;
 
         arbreCouvrant.add(depart);
@@ -223,6 +222,57 @@ public class Graphe {
 
         System.out.println("Poids total de l'arbre couvrant minimum : " + poidsTotal + " secondes.");
         return new ArrayList<>();
+    }
+
+    /**
+     * @param depart Station de départ.
+     * @return Liste des liaisons formant l'arbre couvrant minimum jusqu'à la station d'arrivée.
+     * @autor : Ugo
+     * Algorithme de Prim pour construire un arbre couvrant minimum depuis une station de départ.
+     */
+    public List<Liaison> algorithmePrim(Station depart) {
+        Set<Station> arbreCouvrant = new HashSet<>();
+        List<Liaison> liaisonsArbre = new ArrayList<>();
+        PriorityQueue<Liaison> filePriorite = new PriorityQueue<>(Comparator.comparingInt(Liaison::getPoids));
+
+        int poidsTotal = 0;
+
+        arbreCouvrant.add(depart);
+
+        for (Liaison liaison : adjacences) {
+            if (liaison.getStation1().equals(depart) || liaison.getStation2().equals(depart)) {
+                filePriorite.add(liaison);
+            }
+        }
+
+        while (!filePriorite.isEmpty()) {
+            Liaison liaison = filePriorite.poll();
+            Station station1 = liaison.getStation1();
+            Station station2 = liaison.getStation2();
+
+            Station nouvelleStation = null;
+            if (!arbreCouvrant.contains(station1)) {
+                nouvelleStation = station1;
+            } else if (!arbreCouvrant.contains(station2)) {
+                nouvelleStation = station2;
+            }
+
+            if (nouvelleStation != null) {
+                arbreCouvrant.add(nouvelleStation);
+                liaisonsArbre.add(liaison);
+                poidsTotal += liaison.getPoids();
+
+                for (Liaison prochaineLiaison : adjacences) {
+                    if ((prochaineLiaison.getStation1().equals(nouvelleStation) && !arbreCouvrant.contains(prochaineLiaison.getStation2())) ||
+                            (prochaineLiaison.getStation2().equals(nouvelleStation) && !arbreCouvrant.contains(prochaineLiaison.getStation1()))) {
+                        filePriorite.add(prochaineLiaison);
+                    }
+                }
+            }
+        }
+
+        System.out.println("Poids total de l'arbre couvrant minimal : " + poidsTotal + " secondes.");
+        return liaisonsArbre;
     }
 
 
