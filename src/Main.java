@@ -1,7 +1,4 @@
-import Algorithmes.Graphe;
-import Algorithmes.Liaison;
-import Algorithmes.Metro;
-import Algorithmes.Station;
+import Algorithmes.*;
 
 import java.util.List;
 import java.util.Scanner;
@@ -86,6 +83,7 @@ public class Main {
      * @param station1 La station de départ de l'algorithme de Prim.
      * @author Sahkana
      * Affiche l'arbre couvrant minimal calculé par l'algorithme de Prim.
+     *
      */
     private static void afficherACPM(Graphe graphe, Station station1) {
         // Calcul de l'arbre couvrant minimal entre station1 et station2
