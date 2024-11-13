@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Partie Bonus
  * Application JavaFX représentant une carte du métro parisien avec les stations et les liaisons entre elles.
  */
 public class InterfaceMain extends Application {

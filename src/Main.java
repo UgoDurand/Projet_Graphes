@@ -1,4 +1,7 @@
-import Algorithmes.*;
+import Algorithmes.Graphe;
+import Algorithmes.Liaison;
+import Algorithmes.Metro;
+import Algorithmes.Station;
 
 import java.util.List;
 import java.util.Scanner;
@@ -34,7 +37,7 @@ public class Main {
         // Création du graphe à partir des stations et liaisons
         Graphe graphe = new Graphe();
         graphe.construireGraphe(metro.getStations(), metro.getLiaisons());
-        graphe.afficherGraphe();  // Affichage du graphe
+        //graphe.afficherGraphe();  // Affichage du graphe
 
         // Vérification de la connexité du graphe
         boolean estConnexe = graphe.estConnexe(metro.getStations());
@@ -57,6 +60,7 @@ public class Main {
         Station stationArrivee = stations.get(arrivee);
 
         // Calcul du plus court chemin entre la station de départ et d'arrivée
+        // Faire Bellman Ford
         List<Station> chemin = graphe.plusCourtChemin(stationDepart, stationArrivee);
 
         // Affichage du chemin le plus court
@@ -65,7 +69,7 @@ public class Main {
             for (Station station : chemin) {
                 System.out.print(station.getNom() + " ligne " + station.getLigne() + " -> ");
             }
-            System.out.println("T'es arrivé chef !");
+            System.out.println("T'es arrivé !");
         } else {
             System.out.println("Aucun chemin trouvé entre " + stationDepart.getNom() + " et " + stationArrivee.getNom());
         }
@@ -83,7 +87,6 @@ public class Main {
      * @param station1 La station de départ de l'algorithme de Prim.
      * @author Sahkana
      * Affiche l'arbre couvrant minimal calculé par l'algorithme de Prim.
-     *
      */
     private static void afficherACPM(Graphe graphe, Station station1) {
         // Calcul de l'arbre couvrant minimal entre station1 et station2

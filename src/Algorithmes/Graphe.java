@@ -311,7 +311,7 @@ public class Graphe {
 
             if (!stationSuivante.getLigne().equals(ligneActuelle)) {
                 System.out.println("- À " + stationCourante.getNom() + ", changez et prenez la ligne " +
-                        stationSuivante.getLigne() + " direction " + stationSuivante.getNom() + ".");
+                        stationSuivante.getLigne() + " .");
                 ligneActuelle = stationSuivante.getLigne();
             }
         }
@@ -359,5 +359,6 @@ public class Graphe {
 
         return liaisonsDeStation;
     }
+
 
 }

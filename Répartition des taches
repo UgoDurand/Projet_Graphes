@@ -1,11 +1,11 @@
 Base:
-- Lecture de fichiers - Shakana
-- Detecter station de départ - Nam
-- Detecter station d'arrivée - Nam
-- Afficher le plus court chemin - Ugo
-- Arbre couvrant de poids minimum - Shakana
+- Lecture de fichiers - Shakana ok
+- Ecrire station de départ - Nam ok
+- Ecrire station d'arrivée - Nam ok
+- Afficher le plus court chemin - Ugo ok
+- Arbre couvrant de poids minimum - Shakana ok
 
 Répartitions des tâches
-- Nam : Connexité + Bonus Partie PPC
-- Ugo : Bellman-Ford
-- Shakana : Prim
+- Nam : Connexité + Bonus Partie PPC ok
+- Ugo : Bellman-Ford jle vois plus à faire
+- Shakana : Prim ok
