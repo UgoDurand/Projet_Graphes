@@ -342,4 +342,22 @@ public class Graphe {
         }
     }
 
+    /**
+     * Retourne toutes les liaisons connectées à une station donnée.
+     *
+     * @param station La station pour laquelle nous recherchons les liaisons.
+     * @return Liste des liaisons impliquant la station.
+     */
+    public List<Liaison> getLiaisonsDeStation(Station station) {
+        List<Liaison> liaisonsDeStation = new ArrayList<>();
+
+        for (Liaison liaison : adjacences) {
+            if (liaison.getStation1().equals(station) || liaison.getStation2().equals(station)) {
+                liaisonsDeStation.add(liaison);
+            }
+        }
+
+        return liaisonsDeStation;
+    }
+
 }

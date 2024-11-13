@@ -1,5 +1,7 @@
-import Algorithmes.*;
-
+import Algorithmes.Graphe;
+import Algorithmes.Liaison;
+import Algorithmes.Metro;
+import Algorithmes.Station;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -67,7 +69,6 @@ public class InterfaceMain extends Application {
         treeButton.setOnAction(e -> {
             afficherArbreCouvrant(pane, stations.getFirst(), stations.getLast());
         });
-
 
 
         Scene scene = new Scene(pane, 800, 600);
@@ -220,6 +221,7 @@ public class InterfaceMain extends Application {
                 return Color.GRAY;
         }
     }
+
     private void afficherParcours(Pane pane, Station stationInitiale) {
         Graphe graphe = new Graphe();
         graphe.construireGraphe(stations, liaisons);
