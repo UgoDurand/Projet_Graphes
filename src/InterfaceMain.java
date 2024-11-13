@@ -8,6 +8,10 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -28,6 +32,7 @@ import java.util.List;
  * Application JavaFX représentant une carte du métro parisien avec les stations et les liaisons entre elles.
  */
 public class InterfaceMain extends Application {
+    private static final int ITEMS_PER_PAGE = 20;
     private ArrayList<Station> stations;
     private ArrayList<Liaison> liaisons;
     private double initialX;
@@ -53,8 +58,34 @@ public class InterfaceMain extends Application {
         drawStations(pane);
         drawLiaisons(pane);
 
-        Button treeButton = new Button("Afficher le chemin");
-        Button parcoursButton = new Button("Arbre couvrant du graphe");
+        ListView<String> stationDepartListView = new ListView<>();
+        stationDepartListView.setPrefHeight(200);
+        stationDepartListView.setLayoutX(2200);
+        stationDepartListView.setLayoutY(150);
+        loadStations(stationDepartListView, 0);
+
+        ListView<String> stationArriveeListView = new ListView<>();
+        stationArriveeListView.setPrefHeight(200);
+        stationArriveeListView.setLayoutX(2200);
+        stationArriveeListView.setLayoutY(300);
+        loadStations(stationArriveeListView, 0);
+
+        stationDepartListView.setOnMouseClicked(event -> {
+            String selectedStation = stationDepartListView.getSelectionModel().getSelectedItem();
+            System.out.println("Station de départ sélectionnée : " + selectedStation);
+        });
+
+        stationArriveeListView.setOnMouseClicked(event -> {
+            String selectedStation = stationArriveeListView.getSelectionModel().getSelectedItem();
+            System.out.println("Station d'arrivée sélectionnée : " + selectedStation);
+        });
+
+        VBox inputBox = new VBox(10, stationDepartListView, stationArriveeListView);
+        inputBox.setLayoutY(150);
+        inputBox.setLayoutX(2200);
+
+        Button treeButton = new Button("Arbre couvrant du graphe");
+        Button parcoursButton = new Button("Pluc court chemin");
 
         VBox buttonBox = new VBox(10, parcoursButton, treeButton);
         double graphHeight = 4000;
@@ -63,25 +94,68 @@ public class InterfaceMain extends Application {
 
         buttonBox.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: white; -fx-border-width: 2;");
 
+        Label messageLabel = new Label();
+        messageLabel.setLayoutX(2200);
+        messageLabel.setLayoutY(500);
+        messageLabel.setTextFill(Color.LIGHTBLUE);
+        messageLabel.setFont(new Font("Arial", 16));
+
+        ScrollPane scrollPane = new ScrollPane(pane);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setPrefSize(1200, 800);
+
         parcoursButton.setOnAction(e -> {
-            afficherParcours(pane, stations.get(0)); // À partir de la station 0
+            String departNom = stationDepartListView.getSelectionModel().getSelectedItem();
+            String arriveeNom = stationArriveeListView.getSelectionModel().getSelectedItem();
+
+            if (departNom == null || arriveeNom == null) {
+                messageLabel.setText("Erreur : Veuillez sélectionner des stations valides.");
+                messageLabel.setTextFill(Color.RED);
+            } else {
+                Station stationDepart = null;
+                Station stationArrivee = null;
+
+                for (Station station : stations) {
+                    if (station.getNom().equals(departNom)) {
+                        stationDepart = station;
+                    }
+                    if (station.getNom().equals(arriveeNom)) {
+                        stationArrivee = station;
+                    }
+                }
+
+                if (stationDepart == null || stationArrivee == null) {
+                    messageLabel.setText("Erreur : Les stations spécifiées n'ont pas été trouvées.");
+                    messageLabel.setTextFill(Color.RED);
+                } else {
+                    afficherCheminBellmanFord(pane, stationDepart, stationArrivee);
+                    messageLabel.setText("Chemin trouvé entre " + departNom + " et " + arriveeNom + ".");
+                    messageLabel.setTextFill(Color.GREEN);
+                }
+            }
         });
 
         treeButton.setOnAction(e -> {
-            afficherArbreCouvrant(pane, stations.getFirst(), stations.getLast());
+            afficherParcours(pane, stations.get(0));
         });
 
+        HBox mainLayout = new HBox(20);
+        mainLayout.getChildren().addAll(scrollPane, buttonBox);
 
-        Scene scene = new Scene(pane, 800, 600);
+        VBox layout = new VBox(20, mainLayout, inputBox, messageLabel);
+        Scene scene = new Scene(layout, 1200, 800);
+
         primaryStage.setTitle("Carte du Métro Parisien");
         primaryStage.setScene(scene);
         primaryStage.show();
 
         Scale scale = new Scale(zoomFactor, zoomFactor);
         pane.getTransforms().add(scale);
-        pane.getChildren().add(buttonBox);
 
-        // glissement avec la souris
+        // glissement souris
         pane.setOnMousePressed(event -> {
             initialX = event.getSceneX();
             initialY = event.getSceneY();
@@ -103,14 +177,21 @@ public class InterfaceMain extends Application {
         // zoom
         scene.setOnScroll(event -> {
             if (event.getDeltaY() != 0) {
-                double zoomFactorChange = event.getDeltaY() > 0 ? 1.1 : 0.9; // Zoom avant ou arrière
-
+                double zoomFactorChange = event.getDeltaY() > 0 ? 1.1 : 0.9;
                 zoomFactor *= zoomFactorChange;
                 zoomFactor = Math.max(0.1, Math.min(zoomFactor, 10));
                 scale.setX(zoomFactor);
                 scale.setY(zoomFactor);
             }
         });
+    }
+
+
+    private void loadStations(ListView<String> listView, int startIndex) {
+        int endIndex = Math.min(startIndex + ITEMS_PER_PAGE, stations.size());
+        for (int i = startIndex; i < endIndex; i++) {
+            listView.getItems().add(stations.get(i).getNom());
+        }
     }
 
 
@@ -267,5 +348,40 @@ public class InterfaceMain extends Application {
         timeline.setCycleCount(1);
         timeline.play();
     }
+
+    private void afficherCheminBellmanFord(Pane pane, Station stationDepart, Station stationArrivee) {
+        Graphe graphe = new Graphe();
+        graphe.construireGraphe(stations, liaisons);
+
+        List<Station> chemin = graphe.bellmanFord(stationDepart, stationArrivee);
+
+        if (chemin.isEmpty()) {
+            System.out.println("Aucun chemin trouvé entre les deux stations.");
+        } else {
+            for (int i = 0; i < chemin.size() - 1; i++) {
+                Station stationA = chemin.get(i);
+                Station stationB = chemin.get(i + 1);
+
+                double x1 = stationA.getX() * 4.0;
+                double y1 = stationA.getY() * 4.0 + 200;
+                double x2 = stationB.getX() * 4.0;
+                double y2 = stationB.getY() * 4.0 + 200;
+
+                Line line = new Line(x1, y1, x2, y2);
+                line.setStroke(Color.RED);
+                line.setStrokeWidth(3);
+
+                pane.getChildren().add(line);
+
+                Timeline timeline = new Timeline(
+                        new KeyFrame(Duration.seconds(2.0), new KeyValue(line.strokeWidthProperty(), 6)),
+                        new KeyFrame(Duration.seconds(2), new KeyValue(line.strokeWidthProperty(), 3))
+                );
+                timeline.setCycleCount(1);
+                timeline.play();
+            }
+        }
+    }
+
 
 }

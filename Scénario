@@ -1,0 +1,34 @@
+Scénario d'utilisation du projet "Vas-y dans le métro"
+
+Bienvenue dans le projet "Vas-y dans le métro" !
+Ce guide rapide va vous accompagner pas à pas pour explorer les fonctionnalités principales de l'application.
+
+Pour explorer le projet dans une interface en ligne de commande, exécutez la classe Main.
+Cette version permet de réaliser plusieurs actions principales, comme vérifier la connexité du graphe,
+trouver le plus court chemin, et afficher l’arbre couvrant minimal (ACPM).
+
+Pour cela, lancez le programme en ligne de commande :
+javac Main.java
+java Main
+
+Vous aurez l'affichage suivant :
+
+blabla
+
+Pour une expérience plus interactive avec une carte graphique, lancez InterfaceMain.
+Cette version inclut une visualisation de la carte du métro avec les stations, les liaisons,
+ainsi que les options d'interaction pour afficher le chemin le plus court entre deux stations.
+
+Vous avez le choix entre deux boutons :
+
+1. Bouton Afficher l'ACPM : Ce bouton exécute l'algorithme de Prim pour calculer l'arbre couvrant
+de poids minimal (ACPM) et l'affiche directement sur la carte du métro, en surlignant les liaisons
+minimales qui relient toutes les stations.
+
+2. Bouton Calculer le plus court chemin : Après avoir entré deux stations parmis la liste, ce bouton utilise
+l'algorithme de Bellman-Ford pour trouver le plus court chemin entre deux stations sélectionnées par l’utilisateur.
+Le trajet optimal est ensuite affiché visuellement sur la carte pour faciliter la compréhension.
+
+Pour cela, lancez l’interface graphique (JavaFX) :
+javac InterfaceMain.java
+java InterfaceMain

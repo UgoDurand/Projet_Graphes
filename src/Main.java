@@ -60,8 +60,7 @@ public class Main {
         Station stationArrivee = stations.get(arrivee);
 
         // Calcul du plus court chemin entre la station de départ et d'arrivée
-        // Faire Bellman Ford
-        List<Station> chemin = graphe.plusCourtChemin(stationDepart, stationArrivee);
+        List<Station> chemin = graphe.bellmanFord(stationDepart, stationArrivee);
 
         // Affichage du chemin le plus court
         if (!chemin.isEmpty()) {

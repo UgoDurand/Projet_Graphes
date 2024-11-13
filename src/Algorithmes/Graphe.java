@@ -360,5 +360,70 @@ public class Graphe {
         return liaisonsDeStation;
     }
 
+    public List<Station> getStations() {
+        Set<Station> stationsSet = new HashSet<>();
+        for (Liaison liaison : adjacences) {
+            stationsSet.add(liaison.getStation1());
+            stationsSet.add(liaison.getStation2());
+        }
+        return new ArrayList<>(stationsSet);
+    }
+
+    public List<Station> bellmanFord(Station depart, Station arrivee) {
+        // Initialisation des distances
+        Map<Station, Integer> distances = new HashMap<>();
+        Map<Station, Station> predecesseurs = new HashMap<>();
+        List<Station> stations = getStations();
+
+        for (Station station : stations) {
+            distances.put(station, Integer.MAX_VALUE);
+            predecesseurs.put(station, null);
+        }
+
+        distances.put(depart, 0);
+
+        // Relaxation des arêtes |V| - 1 fois (ici, on itère pour toutes les stations)
+        for (int i = 0; i < stations.size() - 1; i++) {
+            for (Liaison liaison : adjacences) {
+                Station station1 = liaison.getStation1();
+                Station station2 = liaison.getStation2();
+                int poids = liaison.getPoids();
+
+                // Si on trouve une distance plus courte, on met à jour la distance
+                if (distances.get(station1) != Integer.MAX_VALUE && distances.get(station1) + poids < distances.get(station2)) {
+                    distances.put(station2, distances.get(station1) + poids);
+                    predecesseurs.put(station2, station1);
+                }
+            }
+        }
+
+        // Vérification des cycles négatifs
+        for (Liaison liaison : adjacences) {
+            Station station1 = liaison.getStation1();
+            Station station2 = liaison.getStation2();
+            int poids = liaison.getPoids();
+
+            if (distances.get(station1) != Integer.MAX_VALUE && distances.get(station1) + poids < distances.get(station2)) {
+                System.out.println("Il y a un cycle négatif dans le graphe.");
+                return new ArrayList<>();
+            }
+        }
+
+        // Reconstruire le chemin le plus court
+        List<Station> chemin = new ArrayList<>();
+        Station current = arrivee;
+        while (current != null) {
+            chemin.add(0, current);
+            current = predecesseurs.get(current);
+        }
+
+        // Si la station d'arrivée n'est pas atteignable, retourner une liste vide
+        if (distances.get(arrivee) == Integer.MAX_VALUE) {
+            return new ArrayList<>();
+        }
+
+        return chemin;
+    }
+
 
 }

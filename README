@@ -1,0 +1,88 @@
+Vas-y dans le métro - DURAND Ugo, GUERIN Nam Luân, SASIKUMAR Sahkana
+Projet en théorie des graphes pour Efrei Paris, 2024
+
+Ce projet applique les concepts de théorie des graphes pour explorer le réseau du métro parisien.
+Il permet de vérifier la connexité, de calculer le plus court chemin entre deux stations et de générer
+un arbre couvrant de poids minimal. Le projet inclut une interface console et une interface graphique pour l’interaction.
+
+Structure du Projet
+
+- Main.java : Exécute le programme en mode console, permettant la vérification de la connexité du graphe, le calcul du plus court chemin et l'affichage de l'arbre couvrant minimal via la console.
+- InterfaceMain.java : Lance l'interface graphique en JavaFX, permettant à l’utilisateur de cliquer pour afficher le plus court chemin ou l'arbre couvrant minimal sur la carte du métro.
+
+## Lancement du Projet
+
+1. Téléchargez le fichier JAR `ProjetGraphes.jar`.
+2. Assurez-vous d'avoir Java installé sur votre machine.
+3. **Pour lancer le projet** :
+   - Sur Windows : Double-cliquez sur `run.bat`.
+   - Sur Mac/Linux : Ouvrez un terminal et exécutez `sh run.sh`.
+
+OU
+
+Prérequis
+
+1. Environnement Java
+Assurez-vous que Java 8 ou plus récent est installé sur votre machine. Pour vérifier, exécutez :
+java -version
+
+2. JavaFX
+L’interface graphique utilise JavaFX. Selon votre environnement :
+  - Java 8 : JavaFX est inclus par défaut.
+  - Java 11 ou plus : Il est nécessaire de télécharger JavaFX séparément et de l’ajouter au classpath.
+
+Pour installer JavaFX :
+- Téléchargez JavaFX SDK depuis https://gluonhq.com/products/javafx/ et décompressez-le dans un répertoire de votre choix.
+- Notez le chemin d'accès pour le classpath.
+
+Installation
+
+1. Décompressez le fichier ZIP (nom1_nom2_nom3.zip) fourni.
+2. Naviguez dans le répertoire décompressé pour voir la structure du projet, qui devrait inclure :
+   - src/ (dossier contenant les fichiers .java)
+   - data/station.txt (fichier avec les données des stations du métro)
+   - data/liaison.txt (fichier avec les données des liaisons du métro)
+   - data/pospoints.txt (fichier avec les coordonnées pour la carte)
+   - lib/ (dossier pour ajouter JavaFX si nécessaire)
+
+Compilation et Exécution
+
+Étape 1 : Compilation
+Dans le terminal, placez-vous dans le dossier src et compilez les fichiers Java :
+
+javac -d bin Algorithmes/*.java Main.java InterfaceMain.java
+
+
+Étape 2 : Exécution
+
+Pour l’interface console
+1. Dans le terminal, exécutez la classe Main :
+
+java -cp bin Main
+
+Pour l’interface graphique
+1. Si vous utilisez Java 11 ou plus récent, ajoutez le classpath pour JavaFX. Par exemple, si JavaFX est dans path/to/javafx/lib, lancez :
+
+java --module-path path/to/javafx/lib --add-modules javafx.controls,javafx.fxml -cp bin InterfaceMain
+
+2. Pour Java 8, il suffit de lancer directement :
+
+java -cp bin InterfaceMain
+
+Fonctionnalités des Interfaces
+
+- Interface Console (Main) : Permet de calculer le plus court chemin, de vérifier la connexité du graphe et d'afficher l'arbre couvrant minimal.
+- Interface Graphique (InterfaceMain) :
+  - Bouton "Afficher le chemin" : Affiche le plus court chemin entre deux stations.
+  - Bouton "Arbre couvrant du graphe" : Affiche l’arbre couvrant minimal du réseau.
+
+Remarques
+
+- Données : Les fichiers station.txt, liaison.txt et pospoints.txt dans le dossier data sont nécessaires pour le bon fonctionnement des calculs et de l’affichage graphique.
+- JavaFX : Pour les environnements récents de Java, il est impératif d’inclure JavaFX dans le classpath.
+
+Ce projet permet d'explorer le métro parisien avec des algorithmes classiques de la théorie des graphes. L'équipe vous souhaite une bonne exploration !
+
+# Projet Graphes - Analyse et Chemins de Graphes
+
+Ce projet Java implémente des algorithmes de graphes pour visualiser l'ACPM (Arbre Couvrant de Coût Minimum) et calculer le plus court chemin entre deux stations. Le projet inclut une interface graphique pour faciliter l'interaction avec les fonctionnalités principales.
