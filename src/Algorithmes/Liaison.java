@@ -18,13 +18,14 @@ public class Liaison {
      * @param station2 Deuxième station de la liaison.
      * @param temps    Temps de trajet entre station1 et station2 en secondes.
      */
-    public Liaison(Station station1, Station station2, int temps) {
+    public Liaison(Station station1, Station station2, int temps, String ligneMetro) {
         this.station1 = station1;
         this.station2 = station2;
         this.temps = temps;
+        this.ligneMetro = ligneMetro;
     }
 
-    public Liaison(Station station1, Station station2, String ligneMetro, int temps){
+    public Liaison(Station station1, Station station2, String ligneMetro, int temps) {
         this.station1 = station1;
         this.station2 = station2;
         this.temps = temps;

@@ -74,7 +74,8 @@ public class Main {
         }
 
         // Affichage de l'itinéraire entre les deux stations sélectionnées
-        graphe.afficherItineraire(chemin);
+        String itineraire = graphe.afficherItineraire(chemin);
+        System.out.println(itineraire);
 
         // Affichage de l'arbre couvrant minimal du graphe
         Station station1 = stations.getFirst();

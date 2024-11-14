@@ -33,6 +33,7 @@ import java.util.List;
  */
 public class InterfaceMain extends Application {
     private static final int ITEMS_PER_PAGE = 20;
+    Label messageLabel = new Label();
     private ArrayList<Station> stations;
     private ArrayList<Liaison> liaisons;
     private double initialX;
@@ -140,18 +141,15 @@ public class InterfaceMain extends Application {
 
         buttonBox.setStyle("-fx-background-color: #2a003f; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: #2a003f; -fx-border-width: 2;");
 
-        Label messageLabel = new Label();
         messageLabel.setLayoutX(2200);
         messageLabel.setLayoutY(500);
         messageLabel.setTextFill(Color.LIGHTBLUE);
         messageLabel.setFont(new Font("Arial", 16));
 
-        ScrollPane scrollPane = new ScrollPane(pane);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        scrollPane.setPrefSize(1200, 800);
+        StackPane mapContainer = new StackPane(pane);
+        mapContainer.setStyle("-fx-alignment: center;"); // Centre le contenu
+        mapContainer.setPrefSize(1200, 800); // Définit les dimensions préférées de la carte
+
 
         parcoursButton.setOnAction(e -> {
             String departNom = stationListDepart.getSelectionModel().getSelectedItem();
@@ -179,7 +177,7 @@ public class InterfaceMain extends Application {
                 } else {
                     afficherCheminBellmanFord(pane, stationDepart, stationArrivee);
                     messageLabel.setText("Chemin trouvé entre " + departNom + " et " + arriveeNom + ".");
-                    messageLabel.setTextFill(Color.GREEN);
+                    messageLabel.setTextFill(Color.PURPLE);
                 }
             }
         });
@@ -188,12 +186,27 @@ public class InterfaceMain extends Application {
             afficherParcours(pane, stations.get(0));
         });
 
+        Scale scale = new Scale(zoomFactor, zoomFactor);
+        pane.getTransforms().add(scale);
+        Button resetZoomButton = new Button("Réinitialiser le zoom");
+        resetZoomButton.setOnAction(event -> {
+            zoomFactor = 0.5;
+            scale.setX(zoomFactor);
+            scale.setY(zoomFactor);
+        });
+
+        ScrollPane scrollPane = new ScrollPane(mapContainer);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setPrefSize(1200, 800);
+
         HBox mainLayout = new HBox(20);
         mainLayout.getChildren().addAll(scrollPane, buttonBox);
 
-        VBox layout = new VBox(20, mainLayout, inputBox, messageLabel);
-        //layout.setBackground(backgroundObj);
-        layout.setStyle("-fx-background-color: #242177; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: #242177; -fx-border-width: 2;");
+        VBox layout = new VBox(20, inputBox, mainLayout, messageLabel, resetZoomButton);
+        layout.setStyle("-fx-background-color: black;");
 
 
         stationListDepart.setCellFactory(lv -> {
@@ -201,25 +214,33 @@ public class InterfaceMain extends Application {
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
+
                     if (empty || item == null) {
                         setText(null);
                         setStyle("");
                     } else {
                         setText(item);
                         setStyle("-fx-background-color: #2a003f; -fx-text-fill: white;");
-                        setOnMouseEntered(event -> setStyle("-fx-background-color: #5c1081; -fx-text-fill: white;"));
-                        setOnMouseExited(event -> setStyle("-fx-background-color: #2a003f; -fx-text-fill: white;"));
+
+                        setOnMouseEntered(event -> {
+                            if (!isSelected()) {
+                                setStyle("-fx-background-color: #5c1081; -fx-text-fill: white;");
+                            } else {
+                                setStyle("-fx-background-color: #5c1081; -fx-text-fill: white;");
+                            }
+                        });
+
+                        setOnMouseExited(event -> {
+                            if (!isSelected()) {
+                                setStyle("-fx-background-color: #2a003f; -fx-text-fill: white;");
+                            } else {
+                                setStyle("-fx-background-color: #5c1081; -fx-text-fill: white;");
+                            }
+                        });
                     }
                 }
             };
 
-            cell.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
-                if (isSelected) {
-                    cell.setStyle("-fx-background-color: #0b0000; -fx-text-fill: white;");
-                } else {
-                    cell.setStyle("-fx-background-color: #2a003f; -fx-text-fill: white;");
-                }
-            });
             return cell;
         });
 
@@ -228,40 +249,57 @@ public class InterfaceMain extends Application {
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
+
                     if (empty || item == null) {
                         setText(null);
                         setStyle("");
                     } else {
                         setText(item);
                         setStyle("-fx-background-color: #2a003f; -fx-text-fill: white;");
-                        setOnMouseEntered(event -> setStyle("-fx-background-color: #5c1081; -fx-text-fill: white;"));
-                        setOnMouseExited(event -> setStyle("-fx-background-color: #2a003f; -fx-text-fill: white;"));
 
+                        setOnMouseEntered(event -> {
+                            if (!isSelected()) {
+                                setStyle("-fx-background-color: #5c1081; -fx-text-fill: white;");
+                            } else {
+                                setStyle("-fx-background-color: #5c1081; -fx-text-fill: white;");
+                            }
+                        });
+
+                        setOnMouseExited(event -> {
+                            if (!isSelected()) {
+                                setStyle("-fx-background-color: #2a003f; -fx-text-fill: white;");
+                            } else {
+                                setStyle("-fx-background-color: #5c1081; -fx-text-fill: white;");
+                            }
+                        });
                     }
                 }
             };
 
+            // Gestion de la sélection
             cell.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
                 if (isSelected) {
-                    cell.setStyle("-fx-background-color: #0f0c40; -fx-text-fill: white;");
+                    // Si sélectionné, couleur de fond différente
+                    //cell.setStyle("-fx-background-color: #0b0000; -fx-text-fill: white;");
                 } else {
-                    cell.setStyle("-fx-background-color: #242177; -fx-text-fill: white;");
+                    // Si non sélectionné et souris n'est pas sur la cellule, couleur de base
+                    if (!cell.isHover()) {
+                        //cell.setStyle("-fx-background-color: #242177; -fx-text-fill: white;");
+                    }
                 }
             });
 
             return cell;
         });
 
+
         Scene scene = new Scene(layout, 1300, 900);
         primaryStage.setMaximized(true);
-
 
         primaryStage.setTitle("Carte du Métro Parisien");
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        Scale scale = new Scale(zoomFactor, zoomFactor);
-        pane.getTransforms().add(scale);
 
         // glissement souris
         pane.setOnMousePressed(event -> {
@@ -331,23 +369,9 @@ public class InterfaceMain extends Application {
         Scene welcomeScene = new Scene(welcomeRoot, 800, 600);
 
         welcomeStage.setScene(welcomeScene);
-        primaryStage.getIcons().add(new Image("SubwayRunner.png"));
+        welcomeStage.getIcons().add(new Image("SubwayRunner.png"));
         welcomeStage.setTitle("Bienvenue");
         welcomeStage.show();
-    }
-
-    private void loadStations(ListView<String> listView, int startIndex) {
-
-        listView.setStyle(
-                "-fx-background-color: #2a003f;" +           // Couleur de fond du ListView
-                        "-fx-control-inner-background: #2a003f;" +   // Couleur de fond des cellules
-                        "-fx-text-fill: white;"                      // Couleur du texte des cellules
-        );
-
-        int endIndex = Math.min(startIndex + ITEMS_PER_PAGE, stations.size());
-        for (int i = startIndex; i < endIndex; i++) {
-            listView.getItems().add(stations.get(i).getNom());
-        }
     }
 
 
@@ -375,30 +399,6 @@ public class InterfaceMain extends Application {
             stationName.setFill(Color.PURPLE);
             stationName.setFont(new Font("Arial", 25));
             pane.getChildren().add(stationName);
-        }
-    }
-
-    private void afficherArbreCouvrant(Pane pane, Station station1, Station station2) {
-        Graphe graphe = new Graphe();
-        graphe.construireGraphe(stations, liaisons);
-        List<Liaison> arbreCouvrantGraphe = graphe.algorithmePrim(station1, station2);
-
-        if (!arbreCouvrantGraphe.isEmpty()) {
-            for (Liaison liaison : arbreCouvrantGraphe) {
-                Station stationA = liaison.getStation1();
-                Station stationB = liaison.getStation2();
-                double x1 = stationA.getX() * 4.0;
-                double y1 = stationA.getY() * 4.0 + 200;
-                double x2 = stationB.getX() * 4.0;
-                double y2 = stationB.getY() * 4.0 + 200;
-
-                Line line = new Line(x1, y1, x2, y2);
-                line.setStroke(Color.GREEN);
-                line.setStrokeWidth(3);
-                pane.getChildren().add(line);
-            }
-        } else {
-            System.out.println("Pas d'arbre couvrant trouvé.");
         }
     }
 
@@ -508,6 +508,7 @@ public class InterfaceMain extends Application {
     private void afficherCheminBellmanFord(Pane pane, Station stationDepart, Station stationArrivee) {
         Graphe graphe = new Graphe();
         graphe.construireGraphe(stations, liaisons);
+
         pane.getChildren().removeAll(lignesChemin);
         lignesChemin.clear();
 
@@ -515,6 +516,8 @@ public class InterfaceMain extends Application {
 
         if (chemin.isEmpty()) {
             System.out.println("Aucun chemin trouvé entre les deux stations.");
+            messageLabel.setText("Aucun chemin trouvé entre les deux stations.");
+            messageLabel.setTextFill(Color.PURPLE);
         } else {
             for (int i = 0; i < chemin.size() - 1; i++) {
                 Station stationA = chemin.get(i);
@@ -532,6 +535,9 @@ public class InterfaceMain extends Application {
                 pane.getChildren().add(line);
                 lignesChemin.add(line);
 
+                pane.setTranslateX(-offsetX);
+                pane.setTranslateY(-offsetY);
+
                 Timeline timeline = new Timeline(
                         new KeyFrame(Duration.seconds(2.0), new KeyValue(line.strokeWidthProperty(), 6)),
                         new KeyFrame(Duration.seconds(2), new KeyValue(line.strokeWidthProperty(), 3))
@@ -541,6 +547,5 @@ public class InterfaceMain extends Application {
             }
         }
     }
-
 
 }

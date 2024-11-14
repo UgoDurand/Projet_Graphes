@@ -20,11 +20,11 @@ public class Graphe {
      * @param station2 Deuxième station de la liaison.
      * @param temps    Temps de trajet entre les deux stations en secondes.
      */
-    public void ajouterLiaison(Station station1, Station station2, int temps) {
-        Liaison liaison = new Liaison(station1, station2, temps);
+    public void ajouterLiaison(Station station1, Station station2, int temps, String ligneNumero) {
+        Liaison liaison = new Liaison(station1, station2, temps, ligneNumero);
         adjacences.add(liaison);
 
-        Liaison liaisonInverse = new Liaison(station2, station1, temps);
+        Liaison liaisonInverse = new Liaison(station2, station1, temps, ligneNumero);
         adjacences.add(liaisonInverse);
     }
 
@@ -36,7 +36,7 @@ public class Graphe {
      */
     public void construireGraphe(ArrayList<Station> stations, ArrayList<Liaison> liaisons) {
         for (Liaison liaison : liaisons) {
-            ajouterLiaison(liaison.getStation1(), liaison.getStation2(), liaison.getPoids());
+            ajouterLiaison(liaison.getStation1(), liaison.getStation2(), liaison.getPoids(), liaison.getLigneMetro());
         }
     }
 
@@ -281,17 +281,18 @@ public class Graphe {
      * @autor : Ugo
      * Affiche l'itinéraire optimal entre une station de départ et une station d'arrivée.
      */
-    public void afficherItineraire(List<Station> chemin) {
+    public String afficherItineraire(List<Station> chemin) {
         if (chemin == null || chemin.isEmpty()) {
-            System.out.println("Aucun itinéraire disponible.");
-            return;
+            return "Aucun itinéraire disponible.";
         }
 
         int totalTemps = 0;
         Liaison liaisonPrecedente = null;
+        StringBuilder itineraireMessage = new StringBuilder();
 
-        System.out.println("Vous êtes à " + chemin.get(0).getNom() + ".");
-        System.out.println("- Prenez la ligne " + chemin.get(0).getLigne() + " direction " + chemin.get(1).getNom() + ".");
+        itineraireMessage.append("Vous êtes à ").append(chemin.get(0).getNom()).append(".\n");
+        itineraireMessage.append("- Prenez la ligne ").append(chemin.get(0).getLigne())
+                .append(" direction ").append(chemin.get(1).getNom()).append(".\n");
 
         String ligneActuelle = chemin.get(0).getLigne();
 
@@ -310,15 +311,19 @@ public class Graphe {
             }
 
             if (!stationSuivante.getLigne().equals(ligneActuelle)) {
-                System.out.println("- À " + stationCourante.getNom() + ", changez et prenez la ligne " +
-                        stationSuivante.getLigne() + " .");
+                itineraireMessage.append("- À ").append(stationCourante.getNom())
+                        .append(", changez et prenez la ligne ")
+                        .append(stationSuivante.getLigne()).append(".\n");
                 ligneActuelle = stationSuivante.getLigne();
             }
         }
 
         Station destination = chemin.get(chemin.size() - 1);
         String formattedTime = formatTemps(totalTemps);
-        System.out.println("- Vous devriez arriver à " + destination.getNom() + " dans environ " + formattedTime + ".");
+        itineraireMessage.append("- Vous devriez arriver à ").append(destination.getNom())
+                .append(" dans environ ").append(formattedTime).append(".\n");
+
+        return itineraireMessage.toString();
     }
 
 
@@ -370,7 +375,6 @@ public class Graphe {
     }
 
     public List<Station> bellmanFord(Station depart, Station arrivee) {
-        // Initialisation des distances
         Map<Station, Integer> distances = new HashMap<>();
         Map<Station, Station> predecesseurs = new HashMap<>();
         List<Station> stations = getStations();
@@ -382,14 +386,12 @@ public class Graphe {
 
         distances.put(depart, 0);
 
-        // Relaxation des arêtes |V| - 1 fois (ici, on itère pour toutes les stations)
         for (int i = 0; i < stations.size() - 1; i++) {
             for (Liaison liaison : adjacences) {
                 Station station1 = liaison.getStation1();
                 Station station2 = liaison.getStation2();
                 int poids = liaison.getPoids();
 
-                // Si on trouve une distance plus courte, on met à jour la distance
                 if (distances.get(station1) != Integer.MAX_VALUE && distances.get(station1) + poids < distances.get(station2)) {
                     distances.put(station2, distances.get(station1) + poids);
                     predecesseurs.put(station2, station1);
@@ -397,7 +399,6 @@ public class Graphe {
             }
         }
 
-        // Vérification des cycles négatifs
         for (Liaison liaison : adjacences) {
             Station station1 = liaison.getStation1();
             Station station2 = liaison.getStation2();
@@ -409,7 +410,6 @@ public class Graphe {
             }
         }
 
-        // Reconstruire le chemin le plus court
         List<Station> chemin = new ArrayList<>();
         Station current = arrivee;
         while (current != null) {
@@ -417,12 +417,49 @@ public class Graphe {
             current = predecesseurs.get(current);
         }
 
-        // Si la station d'arrivée n'est pas atteignable, retourner une liste vide
         if (distances.get(arrivee) == Integer.MAX_VALUE) {
             return new ArrayList<>();
         }
 
         return chemin;
+    }
+
+    /**
+     * Calcule le poids total (temps de trajet en secondes) d'un chemin donné.
+     *
+     * @param chemin Liste ordonnée des stations formant le chemin.
+     * @return Temps total en secondes du chemin, ou -1 si le chemin est invalide.
+     * @autor : Ugo
+     */
+    public int getTotalChemin(List<Station> chemin) {
+        if (chemin == null || chemin.size() < 2) {
+            return -1;  // Un chemin valide doit contenir au moins deux stations
+        }
+
+        int totalTemps = 0;
+
+        for (int i = 0; i < chemin.size() - 1; i++) {
+            Station stationCourante = chemin.get(i);
+            Station stationSuivante = chemin.get(i + 1);
+            boolean liaisonTrouvee = false;
+
+            for (Liaison liaison : adjacences) {
+                // On vérifie si une liaison existe entre la station courante et la suivante
+                if ((liaison.getStation1().equals(stationCourante) && liaison.getStation2().equals(stationSuivante)) ||
+                        (liaison.getStation1().equals(stationSuivante) && liaison.getStation2().equals(stationCourante))) {
+                    totalTemps += liaison.getPoids();
+                    liaisonTrouvee = true;
+                    break;
+                }
+            }
+
+            // Si une liaison n'a pas été trouvée entre deux stations consécutives, le chemin est invalide
+            if (!liaisonTrouvee) {
+                return -1;
+            }
+        }
+
+        return totalTemps;
     }
 
 

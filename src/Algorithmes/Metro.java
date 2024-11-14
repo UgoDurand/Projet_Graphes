@@ -48,7 +48,7 @@ public class Metro {
                     }
                 }
 
-                Liaison liaison = new Liaison(station1, station2, temps);
+                Liaison liaison = new Liaison(station1, station2, temps, station1.getLigne());
                 liaisons.add(liaison);
             }
         } catch (IOException e) {
