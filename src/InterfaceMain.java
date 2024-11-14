@@ -6,14 +6,14 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -40,6 +40,7 @@ public class InterfaceMain extends Application {
     private double offsetX = 0;
     private double offsetY = 0;
     private double zoomFactor = 1.0;
+    private List<Line> lignesChemin = new ArrayList<>();
 
     public static void main(String[] args) {
         launch(args);
@@ -47,6 +48,12 @@ public class InterfaceMain extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
+        showWelcomeWindow(primaryStage);
+
+    }
+
+    private void showMainInterface(Stage primaryStage) {
         Metro metroMap = new Metro();
         metroMap.lireStationsAvecCoordonnees();
         metroMap.lireLiaisonsAvecTemps();
@@ -54,45 +61,84 @@ public class InterfaceMain extends Application {
         stations = metroMap.getStations();
         liaisons = metroMap.getLiaisons();
 
-        Pane pane = new Pane();
-        drawStations(pane);
-        drawLiaisons(pane);
+        ObservableList<String> stationListe = FXCollections.observableArrayList();
+        for (Station station : stations) {
+            stationListe.add(station.getNom());
+        }
 
-        ListView<String> stationDepartListView = new ListView<>();
-        stationDepartListView.setPrefHeight(200);
-        stationDepartListView.setLayoutX(2200);
-        stationDepartListView.setLayoutY(150);
-        loadStations(stationDepartListView, 0);
+        FilteredList<String> filteredStationDepartList = new FilteredList<>(stationListe, s -> true);
 
-        ListView<String> stationArriveeListView = new ListView<>();
-        stationArriveeListView.setPrefHeight(200);
-        stationArriveeListView.setLayoutX(2200);
-        stationArriveeListView.setLayoutY(300);
-        loadStations(stationArriveeListView, 0);
+        FilteredList<String> filteredStationArriveeList = new FilteredList<>(stationListe, s -> true);
+        ListView<String> stationListDepart = new ListView<>(filteredStationDepartList);
+        stationListDepart.setPrefHeight(300);
+        stationListDepart.setStyle("-fx-background-color: #2a003f; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: #2a003f; -fx-border-width: 2;");
 
-        stationDepartListView.setOnMouseClicked(event -> {
-            String selectedStation = stationDepartListView.getSelectionModel().getSelectedItem();
+        ListView<String> stationListArrivee = new ListView<>(filteredStationArriveeList);
+        stationListArrivee.setPrefHeight(300);
+        stationListArrivee.setStyle("-fx-background-color: #2a003f; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: #2a003f; -fx-border-width: 2;");
+
+        TextField chercheDepart = new TextField();
+        chercheDepart.setPromptText("Rechercher une station de départ...");
+        chercheDepart.setLayoutX(2200);
+        chercheDepart.setStyle("-fx-background-color: #2a003f;" +
+                "-fx-control-inner-background: #ffffff;" +
+                "-fx-text-fill: white;");
+        chercheDepart.setLayoutY(100);
+
+        TextField chercheArrivee = new TextField();
+        chercheArrivee.setPromptText("Rechercher une station d'arrivée...");
+        chercheArrivee.setLayoutX(2200);
+        chercheArrivee.setStyle("-fx-background-color: #2a003f;" +
+                "-fx-control-inner-background: #ffffff;" +
+                "-fx-text-fill: white;");
+        chercheArrivee.setLayoutY(100);
+        chercheArrivee.setLayoutX(2200);
+        chercheArrivee.setLayoutY(100);
+
+        filtreRecherche(filteredStationDepartList, chercheDepart);
+
+        filtreRecherche(filteredStationArriveeList, chercheArrivee);
+
+        stationListDepart.setOnMouseClicked(event -> {
+            String selectedStation = stationListDepart.getSelectionModel().getSelectedItem();
             System.out.println("Station de départ sélectionnée : " + selectedStation);
         });
 
-        stationArriveeListView.setOnMouseClicked(event -> {
-            String selectedStation = stationArriveeListView.getSelectionModel().getSelectedItem();
+        stationListArrivee.setOnMouseClicked(event -> {
+            String selectedStation = stationListArrivee.getSelectionModel().getSelectedItem();
             System.out.println("Station d'arrivée sélectionnée : " + selectedStation);
         });
 
-        VBox inputBox = new VBox(10, stationDepartListView, stationArriveeListView);
+        VBox inputBox = new VBox(10, chercheDepart, stationListDepart, chercheArrivee, stationListArrivee);
         inputBox.setLayoutY(150);
         inputBox.setLayoutX(2200);
+        Pane pane = new Pane();
+
+        drawStations(pane);
+        drawLiaisons(pane);
+
+        primaryStage.getIcons().add(new Image("SubwayRunner.png"));
+
+        //Image backgroundImage = new Image("SubwayRunner.png");
+        BackgroundSize backgroundSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true);
+        //BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+        //Background backgroundObj = new Background(background);
+
+        StackPane root = new StackPane();
+        root.setStyle("-fx-background-color: #2a003f; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: #2a003f; -fx-border-width: 2;");
+
+        //root.setBackground(backgroundObj);
+        root.getChildren().addAll(pane);
 
         Button treeButton = new Button("Arbre couvrant du graphe");
-        Button parcoursButton = new Button("Pluc court chemin");
+        Button parcoursButton = new Button("Plus court chemin");
 
         VBox buttonBox = new VBox(10, parcoursButton, treeButton);
         double graphHeight = 4000;
         buttonBox.setLayoutY(graphHeight + 20);
         buttonBox.setLayoutX(2200);
 
-        buttonBox.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: white; -fx-border-width: 2;");
+        buttonBox.setStyle("-fx-background-color: #2a003f; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: #2a003f; -fx-border-width: 2;");
 
         Label messageLabel = new Label();
         messageLabel.setLayoutX(2200);
@@ -108,8 +154,8 @@ public class InterfaceMain extends Application {
         scrollPane.setPrefSize(1200, 800);
 
         parcoursButton.setOnAction(e -> {
-            String departNom = stationDepartListView.getSelectionModel().getSelectedItem();
-            String arriveeNom = stationArriveeListView.getSelectionModel().getSelectedItem();
+            String departNom = stationListDepart.getSelectionModel().getSelectedItem();
+            String arriveeNom = stationListArrivee.getSelectionModel().getSelectedItem();
 
             if (departNom == null || arriveeNom == null) {
                 messageLabel.setText("Erreur : Veuillez sélectionner des stations valides.");
@@ -146,7 +192,69 @@ public class InterfaceMain extends Application {
         mainLayout.getChildren().addAll(scrollPane, buttonBox);
 
         VBox layout = new VBox(20, mainLayout, inputBox, messageLabel);
-        Scene scene = new Scene(layout, 1200, 800);
+        //layout.setBackground(backgroundObj);
+        layout.setStyle("-fx-background-color: #242177; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: #242177; -fx-border-width: 2;");
+
+
+        stationListDepart.setCellFactory(lv -> {
+            ListCell<String> cell = new ListCell<String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                        setStyle("");
+                    } else {
+                        setText(item);
+                        setStyle("-fx-background-color: #2a003f; -fx-text-fill: white;");
+                        setOnMouseEntered(event -> setStyle("-fx-background-color: #5c1081; -fx-text-fill: white;"));
+                        setOnMouseExited(event -> setStyle("-fx-background-color: #2a003f; -fx-text-fill: white;"));
+                    }
+                }
+            };
+
+            cell.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
+                if (isSelected) {
+                    cell.setStyle("-fx-background-color: #0b0000; -fx-text-fill: white;");
+                } else {
+                    cell.setStyle("-fx-background-color: #2a003f; -fx-text-fill: white;");
+                }
+            });
+            return cell;
+        });
+
+        stationListArrivee.setCellFactory(lv -> {
+            ListCell<String> cell = new ListCell<String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                        setStyle("");
+                    } else {
+                        setText(item);
+                        setStyle("-fx-background-color: #2a003f; -fx-text-fill: white;");
+                        setOnMouseEntered(event -> setStyle("-fx-background-color: #5c1081; -fx-text-fill: white;"));
+                        setOnMouseExited(event -> setStyle("-fx-background-color: #2a003f; -fx-text-fill: white;"));
+
+                    }
+                }
+            };
+
+            cell.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
+                if (isSelected) {
+                    cell.setStyle("-fx-background-color: #0f0c40; -fx-text-fill: white;");
+                } else {
+                    cell.setStyle("-fx-background-color: #242177; -fx-text-fill: white;");
+                }
+            });
+
+            return cell;
+        });
+
+        Scene scene = new Scene(layout, 1300, 900);
+        primaryStage.setMaximized(true);
+
 
         primaryStage.setTitle("Carte du Métro Parisien");
         primaryStage.setScene(scene);
@@ -186,8 +294,56 @@ public class InterfaceMain extends Application {
         });
     }
 
+    private void filtreRecherche(FilteredList<String> filteredStationArriveeList, TextField chercheArrivee) {
+        chercheArrivee.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredStationArriveeList.setPredicate(stationName -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                return stationName.toLowerCase().contains(lowerCaseFilter);
+            });
+        });
+    }
+
+    private void showWelcomeWindow(Stage primaryStage) {
+        Stage welcomeStage = new Stage();
+
+        ImageView backgroundImageView = new ImageView(new Image("SubwayRunner.png"));
+        backgroundImageView.setFitWidth(800);
+        backgroundImageView.setFitHeight(600);
+
+        Text welcomeText = new Text("Bienvenue sur Metro Surfer !");
+        welcomeText.setFont(new Font("serif", 36));
+        welcomeText.setFill(Color.WHITE);
+
+        Button startButton = new Button("Commencer");
+        startButton.setStyle("-fx-background-color: #2a003f; -fx-text-fill: white; -fx-font-size: 18px; -fx-padding: 10;");
+
+        startButton.setOnAction(e -> {
+            welcomeStage.close();
+            showMainInterface(primaryStage);
+        });
+
+        VBox welcomeLayout = new VBox(20, welcomeText, startButton);
+        welcomeLayout.setStyle("-fx-alignment: center; -fx-background-color: rgba(0, 0, 0, 0.7);");
+        StackPane welcomeRoot = new StackPane(backgroundImageView, welcomeLayout);
+        Scene welcomeScene = new Scene(welcomeRoot, 800, 600);
+
+        welcomeStage.setScene(welcomeScene);
+        primaryStage.getIcons().add(new Image("SubwayRunner.png"));
+        welcomeStage.setTitle("Bienvenue");
+        welcomeStage.show();
+    }
 
     private void loadStations(ListView<String> listView, int startIndex) {
+
+        listView.setStyle(
+                "-fx-background-color: #2a003f;" +           // Couleur de fond du ListView
+                        "-fx-control-inner-background: #2a003f;" +   // Couleur de fond des cellules
+                        "-fx-text-fill: white;"                      // Couleur du texte des cellules
+        );
+
         int endIndex = Math.min(startIndex + ITEMS_PER_PAGE, stations.size());
         for (int i = startIndex; i < endIndex; i++) {
             listView.getItems().add(stations.get(i).getNom());
@@ -216,7 +372,7 @@ public class InterfaceMain extends Application {
             pane.getChildren().add(circle);
 
             Text stationName = new Text(x + 10, y, station.getNom());
-            stationName.setFill(Color.BLACK);
+            stationName.setFill(Color.PURPLE);
             stationName.setFont(new Font("Arial", 25));
             pane.getChildren().add(stationName);
         }
@@ -336,8 +492,8 @@ public class InterfaceMain extends Application {
         double y2 = station2.getY() * 4.0 + 200;
 
         Line line = new Line(x1, y1, x2, y2);
-        line.setStroke(Color.RED);
-        line.setStrokeWidth(3);
+        line.setStroke(Color.BLUE);
+        line.setStrokeWidth(5);
 
         pane.getChildren().add(line);
 
@@ -352,6 +508,8 @@ public class InterfaceMain extends Application {
     private void afficherCheminBellmanFord(Pane pane, Station stationDepart, Station stationArrivee) {
         Graphe graphe = new Graphe();
         graphe.construireGraphe(stations, liaisons);
+        pane.getChildren().removeAll(lignesChemin);
+        lignesChemin.clear();
 
         List<Station> chemin = graphe.bellmanFord(stationDepart, stationArrivee);
 
@@ -372,6 +530,7 @@ public class InterfaceMain extends Application {
                 line.setStrokeWidth(3);
 
                 pane.getChildren().add(line);
+                lignesChemin.add(line);
 
                 Timeline timeline = new Timeline(
                         new KeyFrame(Duration.seconds(2.0), new KeyValue(line.strokeWidthProperty(), 6)),
