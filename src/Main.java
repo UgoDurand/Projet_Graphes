@@ -27,23 +27,19 @@ public class Main {
      */
     public static void main(String[] args) {
 
-        // Création d'un objet Metro pour charger les stations et liaisons
         Metro metro = new Metro();
-        metro.lireStations();  // Lecture des stations depuis le fichier
-        metro.lireLiaisons();  // Lecture des liaisons depuis le fichier
-        //metro.afficherStations();  // Affichage des stations
-        //metro.afficherLiaisons();  // Affichage des liaisons
+        metro.lireStations();
+        metro.lireLiaisons();
+        //metro.afficherStations();
+        //metro.afficherLiaisons();
 
-        // Création du graphe à partir des stations et liaisons
         Graphe graphe = new Graphe();
         graphe.construireGraphe(metro.getStations(), metro.getLiaisons());
-        //graphe.afficherGraphe();  // Affichage du graphe
+        //graphe.afficherGraphe();
 
-        // Vérification de la connexité du graphe
         boolean estConnexe = graphe.estConnexe(metro.getStations());
         System.out.println("Le graphe est-il connexe ? " + (estConnexe ? "Oui" : "Non"));
 
-        // Sélection de la station de départ et de la station d'arrivée
         System.out.println("Sélectionnez une station de départ parmi les stations suivantes :");
         List<Station> stations = metro.getStations();
         for (int i = 0; i < stations.size(); i++) {
@@ -59,10 +55,8 @@ public class Main {
         int arrivee = scanner.nextInt();
         Station stationArrivee = stations.get(arrivee);
 
-        // Calcul du plus court chemin entre la station de départ et d'arrivée
         List<Station> chemin = graphe.bellmanFord(stationDepart, stationArrivee);
 
-        // Affichage du chemin le plus court
         if (!chemin.isEmpty()) {
             System.out.println("Plus court chemin de " + stationDepart.getNom() + " à " + stationArrivee.getNom() + " :");
             for (Station station : chemin) {
@@ -73,11 +67,9 @@ public class Main {
             System.out.println("Aucun chemin trouvé entre " + stationDepart.getNom() + " et " + stationArrivee.getNom());
         }
 
-        // Affichage de l'itinéraire entre les deux stations sélectionnées
         String itineraire = graphe.afficherItineraire(chemin);
         System.out.println(itineraire);
 
-        // Affichage de l'arbre couvrant minimal du graphe
         Station station1 = stations.getFirst();
         afficherACPM(graphe, station1);
     }
@@ -89,7 +81,6 @@ public class Main {
      * Affiche l'arbre couvrant minimal calculé par l'algorithme de Prim.
      */
     private static void afficherACPM(Graphe graphe, Station station1) {
-        // Calcul de l'arbre couvrant minimal entre station1 et station2
         List<Liaison> arbreCouvrantGraphe = graphe.algorithmePrim(station1);
 
         if (!arbreCouvrantGraphe.isEmpty()) {

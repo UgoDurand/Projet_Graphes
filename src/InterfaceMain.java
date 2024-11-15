@@ -30,6 +30,7 @@ import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Partie Bonus
@@ -190,7 +191,11 @@ public class InterfaceMain extends Application {
                     messageLabel.setTextFill(Color.RED);
                 } else {
                     afficherCheminBellmanFord(pane, stationDepart, stationArrivee);
-                    messageLabel.setText("Vous êtes à " + departNom + " et vous spuhaitez aller à " + arriveeNom + ".");
+                    Random r = new Random();
+                    int temps = r.nextInt((180 - 28) + 1) + 28;
+                    Graphe g = new Graphe();
+                    String time = g.formatTemps(temps);
+                    messageLabel.setText("Vous êtes à " + departNom + " et vous souhaitez aller à " + arriveeNom + ". Vous y serez dans " + time + " secondes !");
                     messageLabel.setTextFill(Color.PURPLE);
                 }
             }
@@ -226,6 +231,8 @@ public class InterfaceMain extends Application {
         dessinView.setFitHeight(130);
 
         HBox mainLayout = new HBox(10);
+
+
         mainLayout.getChildren().addAll(scrollPane, buttonBox, dessinView);
 
         VBox layout = new VBox(20, inputBox, mainLayout, messageLabel, resetZoomButton);

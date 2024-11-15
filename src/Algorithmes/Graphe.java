@@ -118,7 +118,7 @@ public class Graphe {
         return new ArrayList<>();
     }
 
-    // Méthodes privées pour la gestion des distances et des prédécesseurs
+    //Méthodes pour la gestion des distances et des prédécesseurs
 
     private int getDistance(List<StationDistance> distances, Station station) {
         for (StationDistance stationDistance : distances) {
@@ -173,55 +173,6 @@ public class Graphe {
             System.out.println(liaison.getStation1().getNom() + " (Ligne " + liaison.getStation1().getLigne() + ") --> " +
                     liaison.getStation2().getNom() + " (" + liaison.getPoids() + "s)");
         }
-    }
-
-    /**
-     * @param depart  Station de départ.
-     * @param arrivee Station d'arrivée.
-     * @return Liste des liaisons formant l'arbre couvrant minimum jusqu'à la station d'arrivée.
-     * @autor : Ugo
-     * Algorithme de Prim pour construire un arbre couvrant minimum depuis une station de départ et d'arrivée.
-     */
-    public List<Liaison> algorithmePrim(Station depart, Station arrivee) {
-        Set<Station> arbreCouvrant = new HashSet<>();
-        List<Liaison> liaisonsArbre = new ArrayList<>();
-        PriorityQueue<Liaison> filePriorite = new PriorityQueue<>(Comparator.comparingInt(Liaison::getPoids));
-
-        int poidsTotal = 0;
-
-        arbreCouvrant.add(depart);
-
-        for (Liaison liaison : adjacences) {
-            if (liaison.getStation1().equals(depart)) {
-                filePriorite.add(liaison);
-            }
-        }
-
-        while (!filePriorite.isEmpty()) {
-            Liaison liaison = filePriorite.poll();
-            Station stationVoisine = liaison.getStation2();
-
-            if (!arbreCouvrant.contains(stationVoisine)) {
-                arbreCouvrant.add(stationVoisine);
-                liaisonsArbre.add(liaison);
-
-                poidsTotal += liaison.getPoids();
-
-                if (stationVoisine.equals(arrivee)) {
-                    System.out.println("Poids total de l'arbre couvrant minimum : " + poidsTotal + " secondes.");
-                    return liaisonsArbre;
-                }
-
-                for (Liaison prochaineLiaison : adjacences) {
-                    if (prochaineLiaison.getStation1().equals(stationVoisine) && !arbreCouvrant.contains(prochaineLiaison.getStation2())) {
-                        filePriorite.add(prochaineLiaison);
-                    }
-                }
-            }
-        }
-
-        System.out.println("Poids total de l'arbre couvrant minimum : " + poidsTotal + " secondes.");
-        return new ArrayList<>();
     }
 
     /**
@@ -333,7 +284,7 @@ public class Graphe {
      * @autor : Sahkana
      * Formate le temps en secondes en minutes ou heures.
      */
-    private String formatTemps(int totalSecondes) {
+    public String formatTemps(int totalSecondes) {
         if (totalSecondes < 60) {
             return totalSecondes + " secondes";
         } else if (totalSecondes < 3600) {
