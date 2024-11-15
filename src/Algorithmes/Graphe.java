@@ -424,43 +424,5 @@ public class Graphe {
         return chemin;
     }
 
-    /**
-     * Calcule le poids total (temps de trajet en secondes) d'un chemin donné.
-     *
-     * @param chemin Liste ordonnée des stations formant le chemin.
-     * @return Temps total en secondes du chemin, ou -1 si le chemin est invalide.
-     * @autor : Ugo
-     */
-    public int getTotalChemin(List<Station> chemin) {
-        if (chemin == null || chemin.size() < 2) {
-            return -1;  // Un chemin valide doit contenir au moins deux stations
-        }
-
-        int totalTemps = 0;
-
-        for (int i = 0; i < chemin.size() - 1; i++) {
-            Station stationCourante = chemin.get(i);
-            Station stationSuivante = chemin.get(i + 1);
-            boolean liaisonTrouvee = false;
-
-            for (Liaison liaison : adjacences) {
-                // On vérifie si une liaison existe entre la station courante et la suivante
-                if ((liaison.getStation1().equals(stationCourante) && liaison.getStation2().equals(stationSuivante)) ||
-                        (liaison.getStation1().equals(stationSuivante) && liaison.getStation2().equals(stationCourante))) {
-                    totalTemps += liaison.getPoids();
-                    liaisonTrouvee = true;
-                    break;
-                }
-            }
-
-            // Si une liaison n'a pas été trouvée entre deux stations consécutives, le chemin est invalide
-            if (!liaisonTrouvee) {
-                return -1;
-            }
-        }
-
-        return totalTemps;
-    }
-
 
 }

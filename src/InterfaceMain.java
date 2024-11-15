@@ -9,11 +9,15 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -110,7 +114,24 @@ public class InterfaceMain extends Application {
             System.out.println("Station d'arrivée sélectionnée : " + selectedStation);
         });
 
-        VBox inputBox = new VBox(10, chercheDepart, stationListDepart, chercheArrivee, stationListArrivee);
+        Label bienvenue = new Label("Bienvenue sur Metro Surfer !");
+
+        bienvenue.setAlignment(Pos.CENTER);
+        bienvenue.setFont(new Font("serif", 36));
+        bienvenue.setStyle("-fx-text-fill: white;");
+
+        Image image = new Image("SubwayRunner.png");
+        ImageView imageView = new ImageView(image);
+
+        imageView.setFitWidth(40);
+        imageView.setFitHeight(40);
+
+        HBox hbox = new HBox(10);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.getChildren().addAll(imageView, bienvenue);
+
+
+        VBox inputBox = new VBox(10, hbox, chercheDepart, stationListDepart, chercheArrivee, stationListArrivee);
         inputBox.setLayoutY(150);
         inputBox.setLayoutX(2200);
         Pane pane = new Pane();
@@ -119,20 +140,14 @@ public class InterfaceMain extends Application {
         drawLiaisons(pane);
 
         primaryStage.getIcons().add(new Image("SubwayRunner.png"));
-
-        //Image backgroundImage = new Image("SubwayRunner.png");
-        BackgroundSize backgroundSize = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true);
-        //BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
-        //Background backgroundObj = new Background(background);
-
         StackPane root = new StackPane();
         root.setStyle("-fx-background-color: #2a003f; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: #2a003f; -fx-border-width: 2;");
-
-        //root.setBackground(backgroundObj);
         root.getChildren().addAll(pane);
 
         Button treeButton = new Button("Arbre couvrant du graphe");
+        treeButton.setStyle("-fx-background-color: #ffffff; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: #2a003f; -fx-border-width: 2;");
         Button parcoursButton = new Button("Plus court chemin");
+        parcoursButton.setStyle("-fx-background-color: #ffffff; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: #2a003f; -fx-border-width: 2;");
 
         VBox buttonBox = new VBox(10, parcoursButton, treeButton);
         double graphHeight = 4000;
@@ -143,12 +158,11 @@ public class InterfaceMain extends Application {
 
         messageLabel.setLayoutX(2200);
         messageLabel.setLayoutY(500);
-        messageLabel.setTextFill(Color.LIGHTBLUE);
         messageLabel.setFont(new Font("Arial", 16));
 
         StackPane mapContainer = new StackPane(pane);
-        mapContainer.setStyle("-fx-alignment: center;"); // Centre le contenu
-        mapContainer.setPrefSize(1200, 800); // Définit les dimensions préférées de la carte
+        mapContainer.setStyle("-fx-alignment: center;");
+        mapContainer.setPrefSize(1200, 800);
 
 
         parcoursButton.setOnAction(e -> {
@@ -156,8 +170,8 @@ public class InterfaceMain extends Application {
             String arriveeNom = stationListArrivee.getSelectionModel().getSelectedItem();
 
             if (departNom == null || arriveeNom == null) {
-                messageLabel.setText("Erreur : Veuillez sélectionner des stations valides.");
-                messageLabel.setTextFill(Color.RED);
+                messageLabel.setText("Veuillez sélectionner les stations.");
+                messageLabel.setTextFill(Color.MEDIUMAQUAMARINE);
             } else {
                 Station stationDepart = null;
                 Station stationArrivee = null;
@@ -172,11 +186,11 @@ public class InterfaceMain extends Application {
                 }
 
                 if (stationDepart == null || stationArrivee == null) {
-                    messageLabel.setText("Erreur : Les stations spécifiées n'ont pas été trouvées.");
+                    messageLabel.setText("Les stations spécifiées n'ont pas été trouvées.");
                     messageLabel.setTextFill(Color.RED);
                 } else {
                     afficherCheminBellmanFord(pane, stationDepart, stationArrivee);
-                    messageLabel.setText("Chemin trouvé entre " + departNom + " et " + arriveeNom + ".");
+                    messageLabel.setText("Vous êtes à " + departNom + " et vous spuhaitez aller à " + arriveeNom + ".");
                     messageLabel.setTextFill(Color.PURPLE);
                 }
             }
@@ -189,11 +203,14 @@ public class InterfaceMain extends Application {
         Scale scale = new Scale(zoomFactor, zoomFactor);
         pane.getTransforms().add(scale);
         Button resetZoomButton = new Button("Réinitialiser le zoom");
+        resetZoomButton.setStyle("-fx-background-color: #ffffff; -fx-padding: 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: #2a003f; -fx-border-width: 2;");
+
         resetZoomButton.setOnAction(event -> {
             zoomFactor = 0.5;
             scale.setX(zoomFactor);
             scale.setY(zoomFactor);
         });
+
 
         ScrollPane scrollPane = new ScrollPane(mapContainer);
         scrollPane.setFitToWidth(true);
@@ -202,8 +219,14 @@ public class InterfaceMain extends Application {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setPrefSize(1200, 800);
 
-        HBox mainLayout = new HBox(20);
-        mainLayout.getChildren().addAll(scrollPane, buttonBox);
+        Image dessin = new Image("img.png");
+        ImageView dessinView = new ImageView(dessin);
+
+        dessinView.setFitWidth(150);
+        dessinView.setFitHeight(130);
+
+        HBox mainLayout = new HBox(10);
+        mainLayout.getChildren().addAll(scrollPane, buttonBox, dessinView);
 
         VBox layout = new VBox(20, inputBox, mainLayout, messageLabel, resetZoomButton);
         layout.setStyle("-fx-background-color: black;");
@@ -275,19 +298,6 @@ public class InterfaceMain extends Application {
                     }
                 }
             };
-
-            // Gestion de la sélection
-            cell.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
-                if (isSelected) {
-                    // Si sélectionné, couleur de fond différente
-                    //cell.setStyle("-fx-background-color: #0b0000; -fx-text-fill: white;");
-                } else {
-                    // Si non sélectionné et souris n'est pas sur la cellule, couleur de base
-                    if (!cell.isHover()) {
-                        //cell.setStyle("-fx-background-color: #242177; -fx-text-fill: white;");
-                    }
-                }
-            });
 
             return cell;
         });
@@ -485,7 +495,6 @@ public class InterfaceMain extends Application {
     private void animateEdge(Liaison liaison, Pane pane) {
         Station station1 = liaison.getStation1();
         Station station2 = liaison.getStation2();
-
         double x1 = station1.getX() * 4.0;
         double y1 = station1.getY() * 4.0 + 200;
         double x2 = station2.getX() * 4.0;
@@ -496,6 +505,7 @@ public class InterfaceMain extends Application {
         line.setStrokeWidth(5);
 
         pane.getChildren().add(line);
+        lignesChemin.add(line);
 
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.seconds(2.0), new KeyValue(line.strokeWidthProperty(), 6)),
@@ -515,10 +525,11 @@ public class InterfaceMain extends Application {
         List<Station> chemin = graphe.bellmanFord(stationDepart, stationArrivee);
 
         if (chemin.isEmpty()) {
-            System.out.println("Aucun chemin trouvé entre les deux stations.");
             messageLabel.setText("Aucun chemin trouvé entre les deux stations.");
             messageLabel.setTextFill(Color.PURPLE);
         } else {
+            double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
+
             for (int i = 0; i < chemin.size() - 1; i++) {
                 Station stationA = chemin.get(i);
                 Station stationB = chemin.get(i + 1);
@@ -528,15 +539,17 @@ public class InterfaceMain extends Application {
                 double x2 = stationB.getX() * 4.0;
                 double y2 = stationB.getY() * 4.0 + 200;
 
+                minX = Math.min(minX, Math.min(x1, x2));
+                minY = Math.min(minY, Math.min(y1, y2));
+                maxX = Math.max(maxX, Math.max(x1, x2));
+                maxY = Math.max(maxY, Math.max(y1, y2));
+
                 Line line = new Line(x1, y1, x2, y2);
                 line.setStroke(Color.RED);
                 line.setStrokeWidth(3);
 
                 pane.getChildren().add(line);
                 lignesChemin.add(line);
-
-                pane.setTranslateX(-offsetX);
-                pane.setTranslateY(-offsetY);
 
                 Timeline timeline = new Timeline(
                         new KeyFrame(Duration.seconds(2.0), new KeyValue(line.strokeWidthProperty(), 6)),
